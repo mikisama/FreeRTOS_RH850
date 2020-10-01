@@ -45,8 +45,8 @@ bss_clear_end:
         mov     0,                      r7
         mov     0,                      r8
         mov     r10,                    r6
-        jarl    _exit,                  lp
+        jr      _exit
 
-/* call to exit*/
+/* call to exit */
 _exit:
-        jarl    _exit,          lp
+        br      _exit

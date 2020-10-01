@@ -7,6 +7,7 @@ set(V850_GCC_DIR "D:/GNUV850v14.01-ELF/v850-elf/bin")
 
 set(CMAKE_C_COMPILER ${V850_GCC_DIR}/v850-elf-gcc.exe)
 set(CMAKE_OBJCOPY ${V850_GCC_DIR}/v850-elf-objcopy.exe)
+set(CMAKE_SIZE ${V850_GCC_DIR}/v850-elf-size.exe)
 
 set(CMAKE_BUILD_TYPE Debug)
 # set(CMAKE_BUILD_TYPE MinSizeRel)
@@ -15,8 +16,8 @@ project(test
     LANGUAGES C ASM
 )
 
-set(CMAKE_C_FLAGS "-mv850e3v5 -fdata-sections -ffunction-sections")
-set(CMAKE_ASM_FLAGS "-mv850e3v5 -fdata-sections -ffunction-sections")
+set(CMAKE_C_FLAGS "-mv850e3v5 -msoft-float -fdata-sections -ffunction-sections")
+set(CMAKE_ASM_FLAGS "-mv850e3v5 -msoft-float -fdata-sections -ffunction-sections")
 
 set(LD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/ldscript/rh850_flash.ld)
 
@@ -48,4 +49,8 @@ add_custom_command(TARGET
     binary
     ${PROJECT_NAME}.elf
     ${PROJECT_NAME}.bin
+    ## Show the sizes of sections inside ELF
+    COMMAND
+    ${CMAKE_SIZE}
+    ${PROJECT_NAME}.elf
 )

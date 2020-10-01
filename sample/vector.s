@@ -9,15 +9,15 @@ __reset:	/* 0x0000 */
 
 	.align 4
 __syserr:	/* 0x0010 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __hvtrap:	/* 0x0020 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __fetrap:	/* 0x0030 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __trap0: 	/* 0x0040 */
@@ -25,47 +25,47 @@ __trap0: 	/* 0x0040 */
 
 	.align 4
 __trap1: 	/* 0x0050 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __rie:   	/* 0x0060 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __fppfpi:	/* 0x0070 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __ucpop: 	/* 0x080 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __mip:   	/* 0x0090 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __pie:  	/* 0x00a0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __debug: 	/* 0x00b0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __mae:   	/* 0x00c0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __rfu:   	/* 0x00d0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __fenmi:  	/* 0x00e0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __feint:  	/* 0x00f0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint0: 	/* 0x0100 */
@@ -130,3 +130,7 @@ __eiint14:	/* 0x01e0 */
 	.align 4
 __eiint15:	/* 0x01f0 */
 	jr _eiint_wrapper
+
+    .section .text
+__unused_isr:
+    br __unused_isr

@@ -1,0 +1,53 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "ninja",
+            "args": [],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "ninja",
+            "args": [
+                "clean"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake Gen",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-G",
+                "Ninja",
+                "../"
+            ],
+            "problemMatcher": [],
+            "dependsOn": [
+                "CMake Remove Cache"
+            ]
+        },
+        {
+            "label": "CMake Remove Cache",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "CMakeCache*"
+            ],
+            "problemMatcher": []
+        }
+    ],
+    "options": {
+        "cwd": "${workspaceFolder}/build"
+    }
+}

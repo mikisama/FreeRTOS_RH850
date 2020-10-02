@@ -4,6 +4,7 @@
 
 #include "IntQueue.h"
 #include "blocktim.h"
+#include "countsem.h"
 
 #define CRYSTAL8 8
 #define CRYSTAL16 16
@@ -135,6 +136,7 @@ int main(void)
 
     vStartInterruptQueueTasks();
     vCreateBlockTimeTasks();
+    vStartCountingSemaphoreTasks();
 
     xTaskCreate(vRegTest1Task,            /* Function that implements the task. */
                 "vRegTest1Task",          /* Text name of the task. */
@@ -175,6 +177,11 @@ void prvCheckTimerCallback(TimerHandle_t xTimer)
     if (xAreBlockTimeTestTasksStillRunning() != pdPASS)
     {
         ulErrorFound |= (1 << 1);
+    }
+
+    if (xAreCountingSemaphoreTasksStillRunning() != pdPASS)
+    {
+        ulErrorFound |= (1 << 2);
     }
 
     /* Check that the register test 1 task is still running. */

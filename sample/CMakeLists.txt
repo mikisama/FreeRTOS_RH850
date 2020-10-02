@@ -5,6 +5,7 @@ target_sources(${PROJECT_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/vector.s
     ${CMAKE_CURRENT_LIST_DIR}/eiint_wrapper.s
     ${CMAKE_CURRENT_LIST_DIR}/eiint_handler.c
+    ${CMAKE_CURRENT_LIST_DIR}/RegTest.s
     ${CMAKE_CURRENT_LIST_DIR}/main.c
     # {{END_TARGET_SOURCES}}
 )

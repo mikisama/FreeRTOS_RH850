@@ -114,19 +114,11 @@ void LED_TASK(void *pvParameters)
     }
 }
 
-void LOOP1_TASK(void *pvParameters)
-{
-    for (;;)
-    {
-    }
-}
+uint32_t ulRegTest1LoopCounter = 0;
+uint32_t ulRegTest2LoopCounter = 0;
 
-void LOOP2_TASK(void *pvParameters)
-{
-    for (;;)
-    {
-    }
-}
+extern void vRegTest1Task(void *pvParameters);
+extern void vRegTest2Task(void *pvParameters);
 
 int main(void)
 {
@@ -142,19 +134,19 @@ int main(void)
                 3,                        /* The priority to assign to the task. */
                 NULL);                    /* Don't receive a handle back, it is not needed. */
 
-    xTaskCreate(LOOP1_TASK,               /* Function that implements the task. */
-                "LOOP1_TASK",             /* Text name of the task. */
-                configMINIMAL_STACK_SIZE, /* Stack allocated to the task. */
-                NULL,                     /* The task parameter is not used. */
-                2,                        /* The priority to assign to the task. */
-                NULL);                    /* Don't receive a handle back, it is not needed. */
+    xTaskCreate(vRegTest1Task,   /* Function that implements the task. */
+                "vRegTest1Task", /* Text name of the task. */
+                64,              /* Stack allocated to the task. */
+                NULL,            /* The task parameter is not used. */
+                0,               /* The priority to assign to the task. */
+                NULL);           /* Don't receive a handle back, it is not needed. */
 
-    xTaskCreate(LOOP2_TASK,               /* Function that implements the task. */
-                "LOOP2_TASK",             /* Text name of the task. */
-                configMINIMAL_STACK_SIZE, /* Stack allocated to the task. */
-                NULL,                     /* The task parameter is not used. */
-                2,                        /* The priority to assign to the task. */
-                NULL);
+    xTaskCreate(vRegTest2Task,   /* Function that implements the task. */
+                "vRegTest2Task", /* Text name of the task. */
+                64,              /* Stack allocated to the task. */
+                NULL,            /* The task parameter is not used. */
+                0,               /* The priority to assign to the task. */
+                NULL);           /* Don't receive a handle back, it is not needed. */
 
     vTaskStartScheduler();
 }

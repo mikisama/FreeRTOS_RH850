@@ -7,6 +7,8 @@ target_sources(${PROJECT_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/eiint_handler.c
     ${CMAKE_CURRENT_LIST_DIR}/RegTest.s
     ${CMAKE_CURRENT_LIST_DIR}/main.c
+    ${CMAKE_CURRENT_LIST_DIR}/IntQueue.c
+    ${CMAKE_CURRENT_LIST_DIR}/IntQueueTimer.c
     # {{END_TARGET_SOURCES}}
 )
 

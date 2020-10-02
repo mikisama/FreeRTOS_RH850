@@ -1,5 +1,5 @@
 {
     "files.associations": {
-        "freertos.h": "c"
+        "*.h": "c"
     }
 }

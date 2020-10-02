@@ -1,5 +1,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
+#include "timers.h"
+
+#include "IntQueue.h"
 
 #define CRYSTAL8 8
 #define CRYSTAL16 16
@@ -120,6 +123,8 @@ uint32_t ulRegTest2LoopCounter = 0;
 extern void vRegTest1Task(void *pvParameters);
 extern void vRegTest2Task(void *pvParameters);
 
+void prvCheckTimerCallback(TimerHandle_t xTimer);
+
 int main(void)
 {
     CLKC_Init();
@@ -127,26 +132,66 @@ int main(void)
     /* set P0 pin 0 output low */
     GPIO_SET_OUT_LOW(P, 0, 0);
 
-    xTaskCreate(LED_TASK,                 /* Function that implements the task. */
-                "LED_TASK",               /* Text name of the task. */
+    vStartInterruptQueueTasks();
+
+    xTaskCreate(vRegTest1Task,            /* Function that implements the task. */
+                "vRegTest1Task",          /* Text name of the task. */
                 configMINIMAL_STACK_SIZE, /* Stack allocated to the task. */
                 NULL,                     /* The task parameter is not used. */
-                3,                        /* The priority to assign to the task. */
+                0,                        /* The priority to assign to the task. */
                 NULL);                    /* Don't receive a handle back, it is not needed. */
 
-    xTaskCreate(vRegTest1Task,   /* Function that implements the task. */
-                "vRegTest1Task", /* Text name of the task. */
-                64,              /* Stack allocated to the task. */
-                NULL,            /* The task parameter is not used. */
-                0,               /* The priority to assign to the task. */
-                NULL);           /* Don't receive a handle back, it is not needed. */
+    xTaskCreate(vRegTest2Task,            /* Function that implements the task. */
+                "vRegTest2Task",          /* Text name of the task. */
+                configMINIMAL_STACK_SIZE, /* Stack allocated to the task. */
+                NULL,                     /* The task parameter is not used. */
+                0,                        /* The priority to assign to the task. */
+                NULL);                    /* Don't receive a handle back, it is not needed. */
 
-    xTaskCreate(vRegTest2Task,   /* Function that implements the task. */
-                "vRegTest2Task", /* Text name of the task. */
-                64,              /* Stack allocated to the task. */
-                NULL,            /* The task parameter is not used. */
-                0,               /* The priority to assign to the task. */
-                NULL);           /* Don't receive a handle back, it is not needed. */
+    TimerHandle_t xTimer = xTimerCreate("CheckTimer",           /* A text name, purely to help debugging. */
+                                        3000,                   /* The timer period, in this case 3000ms (3s). */
+                                        pdTRUE,                 /* This is an auto-reload timer, so xAutoReload is set to pdTRUE. */
+                                        NULL,                   /* The ID is not used, so can be set to anything. */
+                                        prvCheckTimerCallback); /* The callback function that inspects the status of all the other tasks. */
+    configASSERT(xTimer);
+    xTimerStart(xTimer, 0);
 
     vTaskStartScheduler();
+}
+
+void prvCheckTimerCallback(TimerHandle_t xTimer)
+{
+    static uint32_t ulLastRegTest1Value = 0, ulLastRegTest2Value = 0;
+    static BaseType_t lChangedTimerPeriodAlready = pdFALSE;
+    BaseType_t ulErrorFound = pdFALSE;
+
+    if (xAreIntQueueTasksStillRunning() != pdPASS)
+    {
+        ulErrorFound |= (1 << 0);
+    }
+
+    /* Check that the register test 1 task is still running. */
+    if (ulLastRegTest1Value == ulRegTest1LoopCounter)
+    {
+        ulErrorFound |= (1 << 4);
+    }
+    ulLastRegTest1Value = ulRegTest1LoopCounter;
+
+    /* Check that the register test 2 task is still running. */
+    if (ulLastRegTest2Value == ulRegTest2LoopCounter)
+    {
+        ulErrorFound |= (1 << 5);
+    }
+    ulLastRegTest2Value = ulRegTest2LoopCounter;
+
+    GPIO_TOOGLE(P, 0, 0);
+
+    if (ulErrorFound != pdFALSE)
+    {
+        if (lChangedTimerPeriodAlready == pdFALSE)
+        {
+            lChangedTimerPeriodAlready = pdTRUE;
+            xTimerChangePeriod(xTimer, 200, 0);
+        }
+    }
 }

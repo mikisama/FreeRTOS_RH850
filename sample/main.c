@@ -3,6 +3,7 @@
 #include "timers.h"
 
 #include "IntQueue.h"
+#include "blocktim.h"
 
 #define CRYSTAL8 8
 #define CRYSTAL16 16
@@ -133,6 +134,7 @@ int main(void)
     GPIO_SET_OUT_LOW(P, 0, 0);
 
     vStartInterruptQueueTasks();
+    vCreateBlockTimeTasks();
 
     xTaskCreate(vRegTest1Task,            /* Function that implements the task. */
                 "vRegTest1Task",          /* Text name of the task. */
@@ -168,6 +170,11 @@ void prvCheckTimerCallback(TimerHandle_t xTimer)
     if (xAreIntQueueTasksStillRunning() != pdPASS)
     {
         ulErrorFound |= (1 << 0);
+    }
+
+    if (xAreBlockTimeTestTasksStillRunning() != pdPASS)
+    {
+        ulErrorFound |= (1 << 1);
     }
 
     /* Check that the register test 1 task is still running. */

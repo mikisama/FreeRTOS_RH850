@@ -11,6 +11,7 @@ target_sources(${PROJECT_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/IntQueueTimer.c
     ${CMAKE_CURRENT_LIST_DIR}/blocktim.c
     ${CMAKE_CURRENT_LIST_DIR}/countsem.c
+    ${CMAKE_CURRENT_LIST_DIR}/recmutex.c
     # {{END_TARGET_SOURCES}}
 )
 

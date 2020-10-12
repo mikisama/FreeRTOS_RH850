@@ -1,4 +1,5 @@
     .section .vectors
+
 	.extern _start
     .extern _eiint_wrapper
 	.extern _vPortYieldHandler

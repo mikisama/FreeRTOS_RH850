@@ -29,12 +29,14 @@
 
     .extern _vTaskSwitchContext
     .extern _pxCurrentTCB
+    .extern _eiint_handler
 
     .global _vPortContextSave
     .global _vPortContextRestore
     .global _vPortStartFirstTask
     .global _vPortYieldHandler
     .global _vPortYield
+    .global _eiint_wrapper
 
 /*-----------------------------------------------------------*/
 
@@ -74,8 +76,8 @@ _vPortContextRestore:
 
 _vPortStartFirstTask:
 
-    mov r0, r11                     /* set Exception Handler Vector Address (base address) */
-    add 1, r11                      /* set EBASE.RINT */
+    mov 0x00000000, r11             /* set Exception Handler Vector Address (base address) */
+    ori 1, r11, r11                 /* set EBASE.RINT for reduced interrupt */
     ldsr r11, 3, 1
 
     jarl _vPortContextRestore, lp
@@ -105,5 +107,22 @@ _vPortYield:
     trap 0x00
 
     jmp [lp]
+
+/*-----------------------------------------------------------*/
+
+_eiint_wrapper:
+
+    prepare {lp}, 0
+
+    jarl _vPortContextSave, lp
+
+    stsr EIIC, r6
+    jarl _eiint_handler, lp
+
+    jarl _vPortContextRestore, lp
+
+    dispose 0, {lp}
+
+    eiret
 
 /*-----------------------------------------------------------*/

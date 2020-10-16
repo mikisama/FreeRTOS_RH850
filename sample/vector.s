@@ -74,63 +74,63 @@ __eiint0: 	/* 0x0100 */
 
 	.align 4
 __eiint1: 	/* 0x0110 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint2: 	/* 0x0120 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint3: 	/* 0x0130 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint4: 	/* 0x0140 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint5: 	/* 0x0150 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint6: 	/* 0x0160 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint7: 	/* 0x0170 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint8: 	/* 0x0180 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint9: 	/* 0x0190 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint10:	/* 0x01a0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint11:	/* 0x01b0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint12:	/* 0x01c0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint13:	/* 0x01d0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint14:	/* 0x01e0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
 	.align 4
 __eiint15:	/* 0x01f0 */
-	jr _eiint_wrapper
+	jr __unused_isr
 
     .section .text
 __unused_isr:

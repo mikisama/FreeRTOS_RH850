@@ -3,6 +3,12 @@
 
 #include "iodefine.h"
 
+#if defined(__GNUC__)
+#define __NOP() asm("nop")
+#define __DI() asm("di")
+#define __EI() asm("ei")
+#endif
+
 #define protected_write(preg, pstatus, reg, value) \
     do                                             \
     {                                              \
@@ -18,7 +24,7 @@
         protected_write(PROTCMD0, PROTS0, SWRESA, 1); \
         for (;;)                                      \
         {                                             \
-            asm("nop");                               \
+            __NOP();                                  \
         }                                             \
     } while (0)
 

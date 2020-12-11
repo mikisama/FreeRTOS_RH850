@@ -92,8 +92,8 @@
     extern void vTaskEnterCritical( void );
     extern void vTaskExitCritical( void );
 
-    #define portDISABLE_INTERRUPTS()                    asm("di")
-    #define portENABLE_INTERRUPTS()                     asm("ei")
+    #define portDISABLE_INTERRUPTS()                    __DI()
+    #define portENABLE_INTERRUPTS()                     __EI()
     #define portCRITICAL_NESTING_IN_TCB                 1
     #define portENTER_CRITICAL()                        vTaskEnterCritical()
     #define portEXIT_CRITICAL()                         vTaskExitCritical()

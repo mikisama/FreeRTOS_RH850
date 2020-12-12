@@ -12,7 +12,7 @@ set(CMAKE_SIZE ${V850_GCC_DIR}/v850-elf-size.exe)
 set(CMAKE_BUILD_TYPE Debug)
 # set(CMAKE_BUILD_TYPE MinSizeRel)
 
-project(test
+project(firmware
     LANGUAGES C ASM
 )
 

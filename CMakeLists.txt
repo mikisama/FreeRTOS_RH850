@@ -16,12 +16,12 @@ project(test
     LANGUAGES C ASM
 )
 
-set(CMAKE_C_FLAGS "-mv850e3v5 -msoft-float -fdata-sections -ffunction-sections")
-set(CMAKE_ASM_FLAGS "-mv850e3v5 -msoft-float -fdata-sections -ffunction-sections")
+set(CMAKE_C_FLAGS "-mv850e3v5 -msoft-float -fdata-sections -ffunction-sections -mspace")
+set(CMAKE_ASM_FLAGS "-mv850e3v5 -msoft-float -fdata-sections -ffunction-sections -mspace")
 
 set(LD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/ldscript/rh850_flash.ld)
 
-set(CMAKE_EXE_LINKER_FLAGS "-nostartfiles -Wl,-T${LD_SCRIPT},-Map,${PROJECT_NAME}.map,--gc-sections,--relax")
+set(CMAKE_EXE_LINKER_FLAGS "-nostartfiles -Wl,-T${LD_SCRIPT},-Map,${PROJECT_NAME}.map,--gc-sections")
 
 add_executable(${PROJECT_NAME})
 

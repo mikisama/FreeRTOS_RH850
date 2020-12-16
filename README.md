@@ -17,3 +17,7 @@ $ cd build
 $ cmake -G 'Ninja' ../
 $ ninja
 ```
+
+## Tips
+
+[GCC](https://gcc-renesas.com/v850/v850-download-toolchains/) seems to have a BUG, ​​`you_path_to/GNUV850v14.01-ELF/v850-elf/bin` must be added to the environment variable `PATH`, otherwise the project cannot be compiled.

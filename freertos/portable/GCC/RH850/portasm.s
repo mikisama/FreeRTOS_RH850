@@ -35,7 +35,6 @@
     .global _vPortContextRestore
     .global _vPortStartFirstTask
     .global _vPortYieldHandler
-    .global _vPortYield
     .global _eiint_wrapper
 
 /*-----------------------------------------------------------*/
@@ -76,10 +75,6 @@ _vPortContextRestore:
 
 _vPortStartFirstTask:
 
-    mov 0x00000000, r11             /* set Exception Handler Vector Address (base address) */
-    ori 1, r11, r11                 /* set EBASE.RINT for reduced interrupt */
-    ldsr r11, 3, 1
-
     jarl _vPortContextRestore, lp
 
     dispose 0, {lp}
@@ -99,14 +94,6 @@ _vPortYieldHandler:
     dispose 0, {lp}
 
     eiret
-
-/*-----------------------------------------------------------*/
-
-_vPortYield:
-
-    trap 0x00
-
-    jmp [lp]
 
 /*-----------------------------------------------------------*/
 

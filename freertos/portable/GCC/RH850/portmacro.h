@@ -80,9 +80,8 @@
 
 
 /* Scheduler utilities. */
-    extern void vPortYield( void );
 
-    #define portYIELD()                                 vPortYield()
+    #define portYIELD()                                 __TRAP0()
     #define portEND_SWITCHING_ISR( xSwitchRequired )    if( xSwitchRequired ) vTaskSwitchContext()
     #define portYIELD_FROM_ISR( x )                     portEND_SWITCHING_ISR( x )
 /*-----------------------------------------------------------*/

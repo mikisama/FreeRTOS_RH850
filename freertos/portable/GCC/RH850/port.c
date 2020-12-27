@@ -154,10 +154,13 @@ void xPortSysTickHandler( void )
  */
 void vPortSetupTimerInterrupt( void )
 {
-    ICOSTM0 = (0 << 12) | /* clear interrupt flag */
-              (0 << 7) |  /* unmask interrupt */
-              (0 << 6) |  /* direct method */
-              (7 << 0);   /* interrupt priority lowest */
+    /*
+     * Do not modify the interrupt priority bits
+     * so that it defaults to the lowest priority.
+     */
+    ICOSTM0 &= ~( ( 1 << 12 ) |  /* clear interrupt flag */
+                  ( 1 << 7 ) |   /* unmask interrupt */
+                  ( 1 << 6 ) );  /* direct method */
 
     OSTM0.EMU = 0;
     OSTM0.CTL = 0;

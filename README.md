@@ -4,9 +4,9 @@ This provides a very basic port of FreeRTOS to RH850.
 
 ## Requirement
 
-1. [GCC](https://gcc-renesas.com/v850/v850-download-toolchains/)
-2. [CMake](https://github.com/Kitware/CMake)
-3. [Ninja](https://github.com/ninja-build/ninja)
+1. [GCC](https://github.com/mikisama/Auto_Build_GCC_RH850/releases)
+2. [CMake](https://github.com/Kitware/CMake/releases)
+3. [Ninja](https://github.com/ninja-build/ninja/releases)
 
 ## How to Build
 
@@ -17,7 +17,3 @@ $ cd build
 $ cmake -G 'Ninja' ../
 $ ninja
 ```
-
-## Tips
-
-[GCC](https://gcc-renesas.com/v850/v850-download-toolchains/) seems to have a BUG, ​​`you_path_to/GNUV850v14.01-ELF/v850-elf/bin` must be added to the environment variable `PATH`, otherwise the project cannot be compiled.

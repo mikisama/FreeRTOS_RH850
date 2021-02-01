@@ -87,7 +87,11 @@ int main(void)
     return 0;
 }
 
-void vMainToggleLED(void)
+/**
+ * This function will be executed in SRAM.
+ * See the .ramfunc section of the generated map file for details.
+ */
+__attribute__((section(".ramfunc"))) void vMainToggleLED(void)
 {
     PNOT0 |= (1 << 0);
 }

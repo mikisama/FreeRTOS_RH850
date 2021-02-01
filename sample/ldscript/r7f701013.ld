@@ -25,6 +25,7 @@ SECTIONS
     {
         . = ALIGN(4);
         __data_start__ = .;
+        *(.ramfunc*)
         *(.data*)
         . = ALIGN(4);
         __data_end__ = .;

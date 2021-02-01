@@ -3,8 +3,6 @@
         {
             "name": "Win32",
             "includePath": [
-                "D:/GNUV850v14.01-ELF/v850-elf/v850-elf/include",
-                "D:/GNUV850v14.01-ELF/v850-elf/v850-elf/optlibinc",
                 "${workspaceFolder}/freertos/include",
                 "${workspaceFolder}/freertos/portable/GCC/RH850",
                 "${workspaceFolder}/sample/tests/include",
@@ -15,7 +13,7 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "intelliSenseMode": "clang-x86"
+            "compilerPath": "D:/gcc-v850-elf-windows/bin/v850-elf-gcc.exe"
         }
     ],
     "version": 4

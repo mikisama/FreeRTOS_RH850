@@ -18,8 +18,17 @@ project(firmware
     LANGUAGES C ASM
 )
 
-set(CMAKE_C_FLAGS "-mv850e3v5 -msoft-float -fdata-sections -ffunction-sections -gdwarf-2 -mspace")
-set(CMAKE_ASM_FLAGS "-mv850e3v5 -msoft-float -fdata-sections -ffunction-sections -gdwarf-2 -mspace")
+# -mspace: this is a V850 specified option for code size optimization.
+# However, when the CMAKE_BUILD_TYPE is not Debug, it will cause some build error.
+#
+# -mlong-calls: this is a V850 specified option, it will prohibit PC relative function calls.
+# When the CMAKE_BUILD_TYPE is not Debug and we place the function to SRAM (.ramfunc section),
+# there will be some build error.
+#
+# see `v850-elf-gcc --target-help` for details.
+
+set(CMAKE_C_FLAGS "-mv850e3v5 -msoft-float -fdata-sections -ffunction-sections -gdwarf-2 -mlong-calls")
+set(CMAKE_ASM_FLAGS "-mv850e3v5 -msoft-float -fdata-sections -ffunction-sections -gdwarf-2 -mlong-calls")
 
 set(LD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/sample/ldscript/r7f701013.ld)
 

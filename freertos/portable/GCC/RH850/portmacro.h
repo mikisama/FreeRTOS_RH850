@@ -81,9 +81,19 @@
 
 /* Scheduler utilities. */
 
-    #define portYIELD()                                 __TRAP0()
-    #define portEND_SWITCHING_ISR( xSwitchRequired )    if( xSwitchRequired ) vTaskSwitchContext()
+/* Called at the end of an ISR that can cause a context switch. */
+    #define portEND_SWITCHING_ISR( xSwitchRequired )    \
+    {                                                   \
+        extern volatile BaseType_t xPortSwitchRequired; \
+                                                        \
+        if( xSwitchRequired != pdFALSE )                \
+        {                                               \
+            xPortSwitchRequired = pdTRUE;               \
+        }                                               \
+    }
+
     #define portYIELD_FROM_ISR( x )                     portEND_SWITCHING_ISR( x )
+    #define portYIELD()                                 asm("trap 0")
 /*-----------------------------------------------------------*/
 
 
@@ -91,8 +101,24 @@
     extern void vTaskEnterCritical( void );
     extern void vTaskExitCritical( void );
 
-    #define portDISABLE_INTERRUPTS()                    __DI()
-    #define portENABLE_INTERRUPTS()                     __EI()
+    __attribute__((always_inline)) static inline BaseType_t xSetInterruptMaskFromISR( void )
+    {
+        BaseType_t xPSW;
+        asm("stsr PSW, %[psw]" : [psw] "=r" ( xPSW ) );
+        asm("di" );
+        return xPSW;
+    }
+
+    __attribute__((always_inline)) static inline void vClearInterruptMaskFromISR( BaseType_t xPSW )
+    {
+        asm("ldsr %[psw], PSW" :: [psw] "r" ( xPSW ) );
+    }
+
+    #define portSET_INTERRUPT_MASK_FROM_ISR()           xSetInterruptMaskFromISR()
+    #define portCLEAR_INTERRUPT_MASK_FROM_ISR( x )      vClearInterruptMaskFromISR( x )
+
+    #define portDISABLE_INTERRUPTS()                    asm("di")
+    #define portENABLE_INTERRUPTS()                     asm("ei")
     #define portCRITICAL_NESTING_IN_TCB                 1
     #define portENTER_CRITICAL()                        vTaskEnterCritical()
     #define portEXIT_CRITICAL()                         vTaskExitCritical()

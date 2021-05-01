@@ -32,6 +32,23 @@
 /* Constants required to set up the initial stack. */
 #define portINITIAL_PSW     ( 0x00008000 ) /* PSW.EBV bit */
 
+#ifndef configISR_STACK_SIZE
+#define configISR_STACK_SIZE ( 512 )
+#endif
+
+/* The stack used by interrupt service routines. */
+static StackType_t xISRStack[ configISR_STACK_SIZE ] = { 0 };
+
+/* The top of ISR stack. */
+const StackType_t * const xISRStackTop = &( xISRStack[ ( configISR_STACK_SIZE & ~portBYTE_ALIGNMENT_MASK ) ] );
+
+/* Counts the interrupt nesting depth. A context switch is only performed
+ * if the nesting depth is 0. */
+volatile BaseType_t xInterruptNesting = 0;
+
+/* Set to 1 to pend a context switch from an ISR. */
+volatile BaseType_t xPortSwitchRequired = pdFALSE;
+
 /*
  * Setup the timer to generate the tick interrupts.  The implementation in this
  * file is weak to allow application writers to change the timer used to
@@ -65,8 +82,7 @@ StackType_t *pxPortInitialiseStack( StackType_t * pxTopOfStack,
 {
     /* Simulate the stack frame as it would be created by a context switch
      * interrupt. */
-    *( pxTopOfStack ) = ( StackType_t ) prvTaskExitError;   /* R31 (LP) */
-    *( --pxTopOfStack ) = ( StackType_t ) pvParameters;     /* R6       */
+    *( pxTopOfStack ) = ( StackType_t ) pvParameters;       /* R6       */
     *( --pxTopOfStack ) = ( StackType_t ) 0x07070707;       /* R7       */
     *( --pxTopOfStack ) = ( StackType_t ) 0x08080808;       /* R8       */
     *( --pxTopOfStack ) = ( StackType_t ) 0x09090909;       /* R9       */
@@ -91,6 +107,7 @@ StackType_t *pxPortInitialiseStack( StackType_t * pxTopOfStack,
     *( --pxTopOfStack ) = ( StackType_t ) 0x28282828;       /* R28      */
     *( --pxTopOfStack ) = ( StackType_t ) 0x29292929;       /* R29      */
     *( --pxTopOfStack ) = ( StackType_t ) 0x30303030;       /* R30 (EP) */
+    *( --pxTopOfStack ) = ( StackType_t ) prvTaskExitError; /* R31 (LP) */
     *( --pxTopOfStack ) = ( StackType_t ) 0x01010101;       /* R1       */
     *( --pxTopOfStack ) = ( StackType_t ) 0x02020202;       /* R2       */
     *( --pxTopOfStack ) = ( StackType_t ) portINITIAL_PSW;  /* EIPSW    */
@@ -139,12 +156,17 @@ void vPortEndScheduler( void )
 
 void xPortSysTickHandler( void )
 {
-    /* Increment the RTOS tick. */
-    if ( xTaskIncrementTick() != pdFALSE )
+    BaseType_t xSavedInterruptStatus;
+	xSavedInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
     {
-        /* Pend a context switch. */
-        vTaskSwitchContext();
+        /* Increment the RTOS tick. */
+        if ( xTaskIncrementTick() != pdFALSE )
+        {
+            /* Pend a context switch. */
+            xPortSwitchRequired = pdTRUE;
+        }
     }
+    portCLEAR_INTERRUPT_MASK_FROM_ISR(xSavedInterruptStatus);
 }
 /*-----------------------------------------------------------*/
 

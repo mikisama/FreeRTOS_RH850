@@ -29,55 +29,31 @@
 
     .extern _vTaskSwitchContext
     .extern _pxCurrentTCB
-    .extern _eiint_handler
+    .extern _vISRHandler
+    .extern _xPortSwitchRequired
+    .extern _xInterruptNesting
+    .extern _xISRStackTop
 
     .global _vPortContextSave
     .global _vPortContextRestore
     .global _vPortStartFirstTask
     .global _vPortYieldHandler
-    .global _eiint_wrapper
-
-/*-----------------------------------------------------------*/
-
-_vPortContextSave:
-
-    pushsp r6 - r30                 /* Save General Purpose Register */
-    pushsp r1 - r2
-
-    stsr EIPSW, r28                 /* Save EIPSW */
-    stsr EIPC, r29                  /* Save EIPC */
-    pushsp r28 - r29
-
-    mov hilo(_pxCurrentTCB), r2     /* pxCurrentTCB->pxTopOfStack = SP */
-    ld.w 0[r2], r2
-    st.w sp, 0[r2]
-
-    jmp [lp]
-
-/*-----------------------------------------------------------*/
-
-_vPortContextRestore:
-
-    mov hilo(_pxCurrentTCB), r2     /* SP = pxCurrentTCB->pxTopOfStack */
-    ld.w 0[r2], r2
-    ld.w 0[r2], sp
-
-    popsp r28 - r29
-    ldsr r29, EIPC                  /* Restore EIPC */
-    ldsr r28, EIPSW                 /* Restore EIPSW */
-
-    popsp r1 - r2                   /* Restore General Purpose Register */
-    popsp r6 - r30
-
-    jmp [lp]
+    .global _vISRWrapper
 
 /*-----------------------------------------------------------*/
 
 _vPortStartFirstTask:
 
-    jarl _vPortContextRestore, lp
+    mov hilo(_pxCurrentTCB), r2         # SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r2], r2
+    ld.w 0[r2], sp
 
-    dispose 0, {lp}
+    popsp r6 - r7
+    ldsr r7, EIPC                       # Restore EIPC
+    ldsr r6, EIPSW                      # Restore EIPSW
+
+    popsp r1 - r2                       # Restore General Purpose Register
+    popsp r6 - r31
 
     eiret
 
@@ -85,30 +61,88 @@ _vPortStartFirstTask:
 
 _vPortYieldHandler:
 
-    prepare {lp}, 0
+    pushsp r6 - r31                     # Save General Purpose Register
+    pushsp r1 - r2
 
-    jarl _vPortContextSave, lp
+    stsr EIPSW, r6                      # Save EIPSW
+    stsr EIPC, r7                       # Save EIPC
+    pushsp r6 - r7
+
+    mov hilo(_pxCurrentTCB), r2         # pxCurrentTCB->pxTopOfStack = SP
+    ld.w 0[r2], r2
+    st.w sp, 0[r2]
+
     jarl _vTaskSwitchContext, lp
-    jarl _vPortContextRestore, lp
 
-    dispose 0, {lp}
+    mov hilo(_pxCurrentTCB), r2         # SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r2], r2
+    ld.w 0[r2], sp
+
+    popsp r6 - r7
+    ldsr r7, EIPC                       # Restore EIPC
+    ldsr r6, EIPSW                      # Restore EIPSW
+
+    popsp r1 - r2                       # Restore General Purpose Register
+    popsp r6 - r31
 
     eiret
 
 /*-----------------------------------------------------------*/
 
-_eiint_wrapper:
+_vISRWrapper:
 
-    prepare {lp}, 0
+    pushsp r6 - r31                     # Save General Purpose Register
+    pushsp r1 - r2
 
-    jarl _vPortContextSave, lp
+    stsr EIPSW, r6                      # Save EIPSW
+    stsr EIPC, r7                       # Save EIPC
+    pushsp r6 - r7
+
+    mov hilo(_xInterruptNesting), r6
+    ld.w 0[r6], r7
+    cmp 0x0, r7                         # if ( xInterruptNesting == 0 )
+    bne aa                              # {
+    mov hilo(_pxCurrentTCB), r2         #     pxCurrentTCB->pxTopOfStack = SP
+    ld.w 0[r2], r2                      #     SP = xISRStackTop
+    st.w sp, 0[r2]                      # }
+    mov hilo(_xISRStackTop), r2
+    ld.w 0[r2], sp
+aa:
+    add 0x1, r7                         # xInterruptNesting++
+    st.w r7, 0[r6]
 
     stsr EIIC, r6
-    jarl _eiint_handler, lp
 
-    jarl _vPortContextRestore, lp
+    ei
+    jarl _vISRHandler, lp
+    di
 
-    dispose 0, {lp}
+    mov hilo(_xInterruptNesting), r6
+    ld.w 0[r6], r7
+    cmp 0x0, r7                         # if ( xInterruptNesting > 0 )
+    be bb                               # {
+    add -1, r7                          #     xInterruptNesting--
+    st.w r7, 0[r6]                      # }
+bb:
+    cmp 0x0, r7                         # if ( xInterruptNesting == 0 )
+    bne dd                              # {
+    mov hilo(_xPortSwitchRequired), r6  #     if ( xPortSwitchRequired )
+    ld.w 0[r6], r7                      #     {
+    cmp 0x1, r7                         #         xPortSwitchRequired = pdFALSE
+    bne cc                              #         vTaskSwitchContext()
+    st.w r0, 0[r6]                      #     }
+    jarl _vTaskSwitchContext, lp
+cc:
+    mov hilo(_pxCurrentTCB), r2
+    ld.w 0[r2], r2                      #     SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r2], sp                      # }
+dd:
+    popsp r6 - r7
+    ldsr r7, EIPC                       # Restore EIPC
+    ldsr r6, EIPSW                      # Restore EIPSW
+
+    popsp r1 - r2                       # Restore General Purpose Register
+    popsp r6 - r31
 
     eiret
 

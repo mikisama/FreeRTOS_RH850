@@ -64,8 +64,6 @@ void vInitialiseTimerForIntQueueTest(void)
     TAUJ0.CMOR0 = 0;
     TAUJ0.CMOR1 = 0;
 
-    TAUJ0.CMOR1 = 0;
-
     TAUJ0.TOM = 0;
     TAUJ0.TOC = 0;
     TAUJ0.TOL = 0;

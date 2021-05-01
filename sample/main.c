@@ -64,7 +64,7 @@ void prvSetupHardware(void)
 
     /*
      * Setup LED Port
-     * LED is on P0_Pin0
+     * LED is on P0_0
      */
     P0 &= ~(1 << 0);
     PM0 &= ~(1 << 0);

@@ -9,11 +9,6 @@ set(CMAKE_C_COMPILER ${V850_GCC_DIR}/v850-elf-gcc.exe)
 set(CMAKE_OBJCOPY ${V850_GCC_DIR}/v850-elf-objcopy.exe)
 set(CMAKE_SIZE ${V850_GCC_DIR}/v850-elf-size.exe)
 
-set(CMAKE_BUILD_TYPE Debug)
-# set(CMAKE_BUILD_TYPE Release)
-# set(CMAKE_BUILD_TYPE RelWithDebInfo)
-# set(CMAKE_BUILD_TYPE MinSizeRel)
-
 project(firmware
     LANGUAGES C ASM
 )

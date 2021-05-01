@@ -3,7 +3,7 @@ target_sources(${PROJECT_NAME}
     # {{BEGIN_TARGET_SOURCES}}
     ${CMAKE_CURRENT_LIST_DIR}/startup.s
     ${CMAKE_CURRENT_LIST_DIR}/vector.s
-    ${CMAKE_CURRENT_LIST_DIR}/eiint_handler.c
+    ${CMAKE_CURRENT_LIST_DIR}/ISRHandler.c
     ${CMAKE_CURRENT_LIST_DIR}/main.c
     ${CMAKE_CURRENT_LIST_DIR}/tests/RegTest.s
     ${CMAKE_CURRENT_LIST_DIR}/tests/main_blink.c

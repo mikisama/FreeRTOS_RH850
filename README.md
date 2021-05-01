@@ -14,6 +14,6 @@ modify the `V850_GCC_DIR` variable in `CMakeLists.txt`
 
 ```bash
 $ cd build
-$ cmake -G 'Ninja' ../
+$ cmake -DCMAKE_BUILD_TYPE=Debug -GNinja ..
 $ ninja
 ```

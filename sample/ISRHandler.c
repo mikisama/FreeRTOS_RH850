@@ -2,7 +2,7 @@ extern void xPortSysTickHandler(void);
 extern void INTTAUJ0I0_IRQHandler(void);
 extern void INTTAUJ0I1_IRQHandler(void);
 
-void eiint_handler(unsigned long eiic)
+void vISRHandler(unsigned long eiic)
 {
     switch (eiic)
     {

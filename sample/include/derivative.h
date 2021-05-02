@@ -3,7 +3,7 @@
 
 #include "iodefine.h"
 
-#if defined(__GNUC__)
+#if defined(__GNUC__) || defined(__ICCRH850__)
 #define __NOP() asm("nop")
 #define __DI() asm("di")
 #define __EI() asm("ei")

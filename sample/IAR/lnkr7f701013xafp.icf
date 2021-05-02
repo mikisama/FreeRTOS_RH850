@@ -1,0 +1,83 @@
+//-------------------------------------------------------------------------
+//      ILINK command file template for RH850 microcontroller R7F701013xAFP.
+//
+//      This file can be used to link object files from the RH850
+//      Assembler, IASMRH850, and the C/C++ compiler ICCRH850.
+//
+//          This file is generated from the device file:
+//          dr7f701013.dvf
+//          Copyright(C) 2015 Renesas
+//          Format version 1.20, File version 1.50
+//-------------------------------------------------------------------------
+
+define memory mem with size = 4G;                                        // Section name    Memory type
+                                                                         // ------------    -----------
+
+define region ROM_near       = mem:[from 0x00000000 to 0x00007FFF];      // <code default>  Code FLASH
+define region ROM_1ST_region = mem:[from 0x00000000 to 0x0007FFFF];      // <code default>  Code FLASH
+define region ROM_2ND_region = mem:[from 0x01000000 to 0x01007FFF];      // SECOND_ROM      Code FLASH
+define region ROM_3RD_region = mem:[from 0x00000000 size 0];
+define region ROM_4TH_region = mem:[from 0x00000000 size 0];
+define region ROM_5TH_region = mem:[from 0x00000000 size 0];
+
+define region RAM_near       = mem:[from 0x00000000 size 0];
+define exported symbol _RAM_1ST_BEG = 0xFEDF8000;
+define exported symbol _RAM_1ST_END = 0xFEDFFFFF;
+define region RAM_1ST_region = mem:[from _RAM_1ST_BEG to _RAM_1ST_END];  // <data default>  Primary RAM
+define exported symbol _RAM_2ND_BEG = 0x00000000;
+define exported symbol _RAM_2ND_END = 0x00000000;
+define region RAM_2ND_region = mem:[from 0x00000000 size 0];
+define exported symbol _RAM_3RD_BEG = 0x00000000;
+define exported symbol _RAM_3RD_END = 0x00000000;
+define region RAM_3RD_region = mem:[from 0x00000000 size 0];
+define exported symbol _RAM_4TH_BEG = 0x00000000;
+define exported symbol _RAM_4TH_END = 0x00000000;
+define region RAM_4TH_region = mem:[from 0x00000000 size 0];
+define exported symbol _RAM_5TH_BEG = 0x00000000;
+define exported symbol _RAM_5TH_END = 0x00000000;
+define region RAM_5TH_region = mem:[from 0x00000000 size 0];
+
+define exported symbol _SELF_AREA_BEG = 0x00000000;
+define exported symbol _SELF_AREA_END = 0x00000000;
+define region SELF_AREA_region = mem:[from 0x00000000 size 0];
+
+define exported symbol _LOC_1ST_BEG = 0x00000000;
+define exported symbol _LOC_1ST_END = 0x00000000;
+define region LOC_1ST_region = mem:[from 0x00000000 size 0];
+define exported symbol _LOC_2ND_BEG = 0x00000000;
+define exported symbol _LOC_2ND_END = 0x00000000;
+define region LOC_2ND_region = mem:[from 0x00000000 size 0];
+define exported symbol _LOC_3RD_BEG = 0x00000000;
+define exported symbol _LOC_3RD_END = 0x00000000;
+define region LOC_3RD_region = mem:[from 0x00000000 size 0];
+define exported symbol _LOC_4TH_BEG = 0x00000000;
+define exported symbol _LOC_4TH_END = 0x00000000;
+define region LOC_4TH_region = mem:[from 0x00000000 size 0];
+define exported symbol _LOC_5TH_BEG = 0x00000000;
+define exported symbol _LOC_5TH_END = 0x00000000;
+define region LOC_5TH_region = mem:[from 0x00000000 size 0];
+define exported symbol _LOC_6TH_BEG = 0x00000000;
+define exported symbol _LOC_6TH_END = 0x00000000;
+define region LOC_6TH_region = mem:[from 0x00000000 size 0];
+define exported symbol _LOC_7TH_BEG = 0x00000000;
+define exported symbol _LOC_7TH_END = 0x00000000;
+define region LOC_7TH_region = mem:[from 0x00000000 size 0];
+
+define exported symbol _RAM_RET_BEG = 0xFEE00000;
+define exported symbol _RAM_RET_END = 0xFEE07FFF;
+define region RAM_RET_region = mem:[from _RAM_RET_BEG to _RAM_RET_END];  // RETENTION_RAM   Retention RAM
+
+//Uncomment and adapt the following section if you want to place the interrupt tables at specific addresses.
+// define block .interrupt_core1 with alignment = 8 {
+//   ro section .table.interrupt_core_1 };
+//
+// "INTERRUPT":place at address mem:0x200
+// {
+//   block .interrupt_core1
+// };
+
+include "layout.icf";
+
+//-------------------------------------------------------------------------
+//      End of file
+//-------------------------------------------------------------------------

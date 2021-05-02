@@ -1,0 +1,359 @@
+//-------------------------------------------------------------------------
+//      ILINK layout template for the Renesas RH850 microcontroller
+//
+//      Copyright 2012-2014 IAR Systems AB.
+//
+//      $Revision: 9457 $
+//-------------------------------------------------------------------------
+
+initialize by copy
+{
+  rw
+};
+
+do not initialize
+{
+  section *.noinit
+};
+
+
+initialize by copy with packing = none { section __DLIB_PERTHREAD };
+
+define block SBSS with static base GP, alignment=8, maximum size = 64K
+{
+  section __DLIB_PERTHREAD,
+  rw section .sbss*,
+  rw section .sdata*
+};
+
+define block SBSS23 with alignment=8, maximum size = 8M
+{
+  rw section .sdata23*,
+  midway block SBSS,
+  rw section .sbss23*
+};
+
+define block TP_BLOCK with static base TP, alignment=8, maximum size = 64K
+{
+  ro section .sconst
+};
+
+define block TP23_BLOCK with alignment=8, maximum size = 8M
+{
+  ro section .sconst23,
+  midway block TP_BLOCK
+};
+
+define block ROM_BLOCK with fixed order
+{
+  block TP23_BLOCK
+};
+
+define block EP_BLOCK with alignment=8, maximum size=16
+{
+  rw section .tbss4*,
+  rw section .tdata4*
+};
+
+define block EBSS5      with fixed order, maximum size = 32
+{
+  block EP_BLOCK,
+  rw section .tbss5*,
+  rw section .tdata5*
+};
+
+define block EBSS6      with fixed order, maximum size = 64
+{
+  block EBSS5,
+  rw section .tbss6*,
+  rw section .tdata6*
+};
+
+define block EBSS7      with fixed order, maximum size = 128
+{
+  block EBSS6,
+  rw section .tbss7*,
+  rw section .tdata7*
+};
+
+define block EBSS8 with static base EP, fixed order, maximum size = 256
+{
+  block EBSS7,
+  rw section .tbss8*,
+  rw section .tdata8*
+};
+
+define block CALLT      with fixed order, maximum size = 64K, alignment = 2
+{
+  ro section .table.callt,
+  ro section .text.callt
+};
+
+define block TRAP       with fixed order, maximum size = 64K, alignment = 2
+{
+  ro section .dispatch.trap,
+  ro section .table.trap,
+  ro section .text.trap
+};
+
+define block FETRAP     with fixed order, maximum size = 64K, alignment = 2
+{
+  ro section .dispatch.fetrap,
+  ro section .table.fetrap,
+  ro section .text.fetrap
+};
+
+define block HVTRAP     with fixed order, maximum size = 64K, alignment = 2
+{
+  ro section .dispatch.hvtrap,
+  ro section .table.hvtrap,
+  ro section .text.hvtrap
+};
+
+define block RAM_BLOCK with fixed order
+{
+  block SBSS23,
+  block EBSS8,
+};
+
+define block HEAP     with alignment = 8, size = HEAP_SIZE
+{
+};
+
+define block CSTACK   with alignment = 8, size = CSTACK_SIZE
+{
+  section CSTACK
+};
+
+define block CSTACK1   with alignment = 8, size = CSTACK_SIZE
+{
+  section CSTACK1
+};
+
+define block CSTACK2   with alignment = 8, size = CSTACK_SIZE
+{
+  section CSTACK2
+};
+
+define block CSTACK3   with alignment = 8, size = CSTACK_SIZE
+{
+  section CSTACK3
+};
+
+define block CSTACK4   with alignment = 8, size = CSTACK_SIZE
+{
+  section CSTACK4
+};
+
+define block CSTACK5   with alignment = 8, size = CSTACK_SIZE
+{
+  section CSTACK5
+};
+
+define block CSTACK6   with alignment = 8, size = CSTACK_SIZE
+{
+  section CSTACK6
+};
+
+define block CSTACK7   with alignment = 8, size = CSTACK_SIZE
+{
+  section CSTACK7
+};
+
+define block .reset with alignment = 16
+{
+  ro section RCODE,
+  ro section .reset,
+};
+
+define block .syscalltable with alignment = 4
+                                        {
+  ro section .syscalltable
+};
+
+define block .hvcalltable with alignment = 4
+{
+  ro section .hvcalltable
+};
+
+"RESET":place at address mem:0x0
+{
+  block .reset
+};
+
+"ROMNEAR":place in ROM_near
+{
+  ro section .zconst
+};
+
+"RAMNEAR":place in RAM_near
+{
+  rw section .zbss,
+  rw section .zdata,
+  rw section .ndata,
+};
+
+"ROM1ST":place in ROM_1ST_region
+{
+  block CALLT,
+  block TRAP,
+  block FETRAP,
+  block HVTRAP,
+  ro,
+  ro section .const,
+  block .syscalltable,
+  block .hvcalltable,
+  block ROM_BLOCK
+};
+
+"ROM2ND":place in ROM_2ND_region
+{
+  ro section SECOND_ROM*
+};
+
+"ROM3RD":place in ROM_3RD_region
+{
+  ro section THIRD_ROM*
+};
+
+"ROM4TH":place in ROM_4TH_region
+{
+  ro section FOURTH_ROM*
+};
+
+"ROM5TH":place in ROM_5TH_region
+{
+  ro section FIFTH_ROM*
+};
+
+"RAM1ST":place in RAM_1ST_region
+{
+  rw,
+  rw section .bss,
+  rw section .data,
+  block RAM_BLOCK,
+  block HEAP,
+  block CSTACK
+};
+
+"RAM2ND":place in RAM_2ND_region
+{
+  rw section SECOND_RAM*
+};
+
+"RAM3RD":place in RAM_3RD_region
+{
+  rw section THIRD_RAM*
+};
+
+"RAM4TH":place in RAM_4TH_region
+{
+  rw section FOURTH_RAM*
+};
+
+"RAM5TH":place in RAM_5TH_region
+{
+  rw section FIFTH_RAM*
+};
+
+define overlay SELF_AREA_OVERLAY
+{
+  block CSTACK1,
+  rw section SELF_AREA1*
+};
+
+define overlay SELF_AREA_OVERLAY
+{
+  block CSTACK2,
+  rw section SELF_AREA2*
+};
+
+define overlay SELF_AREA_OVERLAY
+{
+  block CSTACK3,
+  rw section SELF_AREA3*
+};
+
+define overlay SELF_AREA_OVERLAY
+{
+  block CSTACK4,
+  rw section SELF_AREA4*
+};
+
+define overlay SELF_AREA_OVERLAY
+{
+  block CSTACK5,
+  rw section SELF_AREA5*
+};
+
+define overlay SELF_AREA_OVERLAY
+{
+  block CSTACK6,
+  rw section SELF_AREA6*
+};
+
+define overlay SELF_AREA_OVERLAY
+{
+  block CSTACK7,
+  rw section SELF_AREA7*
+};
+
+"SELFAREA":place in SELF_AREA_region
+{
+  overlay SELF_AREA_OVERLAY,
+  rw section SELF_AREA*
+};
+
+"LOC1ST":place in LOC_1ST_region
+{
+  rw section LOCAL1_RAM*
+};
+
+"LOC2ND":place in LOC_2ND_region
+{
+  rw section LOCAL2_RAM*
+};
+
+"LOC3RD":place in LOC_3RD_region
+{
+  rw section LOCAL3_RAM*
+};
+
+"LOC4TH":place in LOC_4TH_region
+{
+  rw section LOCAL4_RAM*
+};
+
+"LOC5TH":place in LOC_5TH_region
+{
+  rw section LOCAL5_RAM*
+};
+
+"LOC6TH":place in LOC_6TH_region
+{
+  rw section LOCAL6_RAM*
+};
+
+"LOC7TH":place in LOC_7TH_region
+{
+  rw section LOCAL7_RAM*
+};
+
+"RAMRET":place in RAM_RET_region
+{
+  rw section RETENTION_RAM*
+};
+
+use init table TableS for {  rw section SELF_AREA* };
+use init table Table1 for {  rw section LOCAL1_RAM*, rw section SELF_AREA1* };
+use init table Table2 for {  rw section LOCAL2_RAM*, rw section SELF_AREA2* };
+use init table Table3 for {  rw section LOCAL3_RAM*, rw section SELF_AREA3* };
+use init table Table4 for {  rw section LOCAL4_RAM*, rw section SELF_AREA4* };
+use init table Table5 for {  rw section LOCAL5_RAM*, rw section SELF_AREA5* };
+use init table Table6 for {  rw section LOCAL6_RAM*, rw section SELF_AREA6* };
+use init table Table7 for {  rw section LOCAL7_RAM*, rw section SELF_AREA7* };
+
+
+//-------------------------------------------------------------------------
+//      End of File
+//-------------------------------------------------------------------------

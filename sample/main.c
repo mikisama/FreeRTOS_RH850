@@ -69,6 +69,14 @@ void prvSetupHardware(void)
     P0 &= ~(1 << 0);
     PM0 &= ~(1 << 0);
     PMC0 &= ~(1 << 0);
+
+    /*
+     * set EBASE.RINT
+     * all EI level interrupts will jump to 0x0100
+     */
+#if defined(__GNUC__) || defined(__ICCRH850__)
+    asm("ldsr %[ebase], 3, 1" ::[ebase] "r"(0x0001));
+#endif
 }
 
 extern void main_blinky(void);
@@ -87,11 +95,7 @@ int main(void)
     return 0;
 }
 
-/**
- * This function will be executed in SRAM.
- * See the .ramfunc section of the generated map file for details.
- */
-__attribute__((section(".ramfunc"))) void vMainToggleLED(void)
+void vMainToggleLED(void)
 {
     PNOT0 |= (1 << 0);
 }

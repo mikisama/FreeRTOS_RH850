@@ -15,10 +15,6 @@
 _start:
     mov     hilo(__stack),          sp
 
-    mov     hilo(__reset),          r11         /* set Exception Handler Vector Address (base address) */
-    ori     1,                      r11, r11    /* set EBASE.RINT for reduced interrupt */
-    ldsr    r11,                    3, 1        /* all EI level interrupts will jump to 0x0100 */
-
     mov     hilo(__data_start__),   r6
     mov     hilo(__data_end__),     r7
     mov     hilo(__etext),          r8

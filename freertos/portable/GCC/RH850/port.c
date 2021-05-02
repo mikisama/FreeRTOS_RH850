@@ -157,7 +157,7 @@ void vPortEndScheduler( void )
 void xPortSysTickHandler( void )
 {
     BaseType_t xSavedInterruptStatus;
-	xSavedInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
+    xSavedInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
     {
         /* Increment the RTOS tick. */
         if ( xTaskIncrementTick() != pdFALSE )

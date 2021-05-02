@@ -1,6 +1,9 @@
 target_sources(${PROJECT_NAME}
     PRIVATE
     # {{BEGIN_TARGET_SOURCES}}
+    ${CMAKE_CURRENT_LIST_DIR}/portable/${FREERTOS_TOOLCHAIN}/RH850/port.c
+    ${CMAKE_CURRENT_LIST_DIR}/portable/${FREERTOS_TOOLCHAIN}/RH850/portasm.s
+    ${CMAKE_CURRENT_LIST_DIR}/portable/MemMang/heap_1.c
     ${CMAKE_CURRENT_LIST_DIR}/croutine.c
     ${CMAKE_CURRENT_LIST_DIR}/event_groups.c
     ${CMAKE_CURRENT_LIST_DIR}/list.c
@@ -14,6 +17,5 @@ target_sources(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME}
     PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include
+    ${CMAKE_CURRENT_LIST_DIR}/portable/${FREERTOS_TOOLCHAIN}/RH850
 )
-
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/portable)

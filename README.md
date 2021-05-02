@@ -13,7 +13,6 @@ This provides a very basic port of FreeRTOS to RH850.
 modify the `V850_GCC_DIR` variable in `CMakeLists.txt`
 
 ```bash
-$ cd build
-$ cmake -DCMAKE_BUILD_TYPE=Debug -GNinja ..
-$ ninja
+$ cmake -DCMAKE_TOOLCHAIN_FILE='cmake/gcc.cmake' -DCMAKE_BUILD_TYPE=Debug -Bbuild  -GNinja .
+$ cmake --build build
 ```

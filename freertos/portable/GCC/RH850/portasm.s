@@ -34,8 +34,6 @@
     .extern _xInterruptNesting
     .extern _xISRStackTop
 
-    .global _vPortContextSave
-    .global _vPortContextRestore
     .global _vPortStartFirstTask
     .global _vPortYieldHandler
     .global _vISRWrapper

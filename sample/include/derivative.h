@@ -7,6 +7,8 @@
 #define __NOP() asm("nop")
 #define __DI() asm("di")
 #define __EI() asm("ei")
+#elif defined(__CCRH__)
+#define __NOP() __nop()
 #endif
 
 #define protected_write(preg, pstatus, reg, value) \

@@ -57,4 +57,23 @@ elseif(${FREERTOS_TOOLCHAIN} STREQUAL "IAR")
         ${PROJECT_NAME}.bin
     )
 
+elseif(${FREERTOS_TOOLCHAIN} STREQUAL "CCRH")
+
+    add_custom_command(TARGET
+        ${PROJECT_NAME}
+        POST_BUILD
+        ## Convert ELF to Motorola S-records
+        COMMAND
+        ${CMAKE_CCRH_LINKER}
+        ${PROJECT_NAME}.elf
+        -form=stype
+        -output=${PROJECT_NAME}.srec
+        ## Convert ELF to Raw Binary
+        COMMAND
+        ${CMAKE_CCRH_LINKER}
+        ${PROJECT_NAME}.elf
+        -form=binary
+        -output=${PROJECT_NAME}.bin
+    )
+
 endif()

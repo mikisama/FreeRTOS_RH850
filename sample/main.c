@@ -76,6 +76,8 @@ void prvSetupHardware(void)
      */
 #if defined(__GNUC__) || defined(__ICCRH850__)
     asm("ldsr %[ebase], 3, 1" ::[ebase] "r"(0x0001));
+#elif defined(__CCRH__)
+    __ldsr_rh(3, 1, 0x0001);
 #endif
 }
 

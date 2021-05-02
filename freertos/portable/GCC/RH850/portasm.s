@@ -48,12 +48,16 @@ _vPortStartFirstTask:
     ld.w 0[r2], r2
     ld.w 0[r2], sp
 
+    popsp r20 - r30                     # Restore General Purpose Register (callee save register)
+
     popsp r6 - r7
     ldsr r7, EIPC                       # Restore EIPC
     ldsr r6, EIPSW                      # Restore EIPSW
 
-    popsp r1 - r2                       # Restore General Purpose Register
-    popsp r6 - r31
+    popsp r1 - r2                       # Restore General Purpose Register (caller save register)
+    popsp r6 - r19
+
+    dispose 0, {lp}
 
     eiret
 
@@ -61,12 +65,16 @@ _vPortStartFirstTask:
 
 _vPortYieldHandler:
 
-    pushsp r6 - r31                     # Save General Purpose Register
+    prepare {lp}, 0
+
+    pushsp r6 - r19                     # Save General Purpose Register (caller save register)
     pushsp r1 - r2
 
     stsr EIPSW, r6                      # Save EIPSW
     stsr EIPC, r7                       # Save EIPC
     pushsp r6 - r7
+
+    pushsp r20 - r30                    # Save General Purpose Register (callee save register)
 
     mov hilo(_pxCurrentTCB), r2         # pxCurrentTCB->pxTopOfStack = SP
     ld.w 0[r2], r2
@@ -78,12 +86,16 @@ _vPortYieldHandler:
     ld.w 0[r2], r2
     ld.w 0[r2], sp
 
+    popsp r20 - r30                     # Restore General Purpose Register (callee save register)
+
     popsp r6 - r7
     ldsr r7, EIPC                       # Restore EIPC
     ldsr r6, EIPSW                      # Restore EIPSW
 
-    popsp r1 - r2                       # Restore General Purpose Register
-    popsp r6 - r31
+    popsp r1 - r2                       # Restore General Purpose Register (caller save register)
+    popsp r6 - r19
+
+    dispose 0, {lp}
 
     eiret
 
@@ -91,7 +103,9 @@ _vPortYieldHandler:
 
 _vISRWrapper:
 
-    pushsp r6 - r31                     # Save General Purpose Register
+    prepare {lp}, 0
+
+    pushsp r6 - r19                     # Save General Purpose Register (caller save register)
     pushsp r1 - r2
 
     stsr EIPSW, r6                      # Save EIPSW
@@ -102,6 +116,7 @@ _vISRWrapper:
     ld.w 0[r6], r7
     cmp 0x0, r7                         # if ( xInterruptNesting == 0 )
     bne aa                              # {
+    pushsp r20 - r30                    #     Save General Purpose Register (callee save register)
     mov hilo(_pxCurrentTCB), r2         #     pxCurrentTCB->pxTopOfStack = SP
     ld.w 0[r2], r2                      #     SP = xISRStackTop
     st.w sp, 0[r2]                      # }
@@ -135,14 +150,17 @@ bb:
 cc:
     mov hilo(_pxCurrentTCB), r2
     ld.w 0[r2], r2                      #     SP = pxCurrentTCB->pxTopOfStack
-    ld.w 0[r2], sp                      # }
+    ld.w 0[r2], sp                      #     Restore General Purpose Register (callee save register)
+    popsp r20 - r30                     # }
 dd:
     popsp r6 - r7
     ldsr r7, EIPC                       # Restore EIPC
     ldsr r6, EIPSW                      # Restore EIPSW
 
-    popsp r1 - r2                       # Restore General Purpose Register
-    popsp r6 - r31
+    popsp r1 - r2                       # Restore General Purpose Register (caller save register)
+    popsp r6 - r19
+
+    dispose 0, {lp}
 
     eiret
 

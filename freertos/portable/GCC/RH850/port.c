@@ -82,7 +82,8 @@ StackType_t *pxPortInitialiseStack( StackType_t * pxTopOfStack,
 {
     /* Simulate the stack frame as it would be created by a context switch
      * interrupt. */
-    *( pxTopOfStack ) = ( StackType_t ) pvParameters;       /* R6       */
+    *( pxTopOfStack ) = ( StackType_t ) prvTaskExitError;   /* R31 (LP) */
+    *( --pxTopOfStack ) = ( StackType_t ) pvParameters;     /* R6       */
     *( --pxTopOfStack ) = ( StackType_t ) 0x07070707;       /* R7       */
     *( --pxTopOfStack ) = ( StackType_t ) 0x08080808;       /* R8       */
     *( --pxTopOfStack ) = ( StackType_t ) 0x09090909;       /* R9       */
@@ -96,6 +97,10 @@ StackType_t *pxPortInitialiseStack( StackType_t * pxTopOfStack,
     *( --pxTopOfStack ) = ( StackType_t ) 0x17171717;       /* R17      */
     *( --pxTopOfStack ) = ( StackType_t ) 0x18181818;       /* R18      */
     *( --pxTopOfStack ) = ( StackType_t ) 0x19191919;       /* R19      */
+    *( --pxTopOfStack ) = ( StackType_t ) 0x01010101;       /* R1       */
+    *( --pxTopOfStack ) = ( StackType_t ) 0x02020202;       /* R2       */
+    *( --pxTopOfStack ) = ( StackType_t ) portINITIAL_PSW;  /* EIPSW    */
+    *( --pxTopOfStack ) = ( StackType_t ) pxCode;           /* EIPC     */
     *( --pxTopOfStack ) = ( StackType_t ) 0x20202020;       /* R20      */
     *( --pxTopOfStack ) = ( StackType_t ) 0x21212121;       /* R21      */
     *( --pxTopOfStack ) = ( StackType_t ) 0x22222222;       /* R22      */
@@ -107,11 +112,6 @@ StackType_t *pxPortInitialiseStack( StackType_t * pxTopOfStack,
     *( --pxTopOfStack ) = ( StackType_t ) 0x28282828;       /* R28      */
     *( --pxTopOfStack ) = ( StackType_t ) 0x29292929;       /* R29      */
     *( --pxTopOfStack ) = ( StackType_t ) 0x30303030;       /* R30 (EP) */
-    *( --pxTopOfStack ) = ( StackType_t ) prvTaskExitError; /* R31 (LP) */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x01010101;       /* R1       */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x02020202;       /* R2       */
-    *( --pxTopOfStack ) = ( StackType_t ) portINITIAL_PSW;  /* EIPSW    */
-    *( --pxTopOfStack ) = ( StackType_t ) pxCode;           /* EIPC     */
 
     return pxTopOfStack;
 }

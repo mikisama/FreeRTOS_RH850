@@ -28,9 +28,10 @@
             "type": "shell",
             "command": "cmake",
             "args": [
-                "-G",
-                "Ninja",
-                "../"
+                "-DCMAKE_TOOLCHAIN_FILE='cmake/gcc.cmake'",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-GNinja",
+                ".."
             ],
             "problemMatcher": [],
             "dependsOn": [

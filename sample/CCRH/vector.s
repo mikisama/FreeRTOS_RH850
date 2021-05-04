@@ -1,5 +1,5 @@
     .section "RESET", text
-    .align	16
+    .align 16
 __reset:    ; 0x0000
     jr __cstart
 

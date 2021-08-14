@@ -22,3 +22,5 @@ $ cmake -DCMAKE_TOOLCHAIN_FILE='cmake/gcc.cmake' -DCMAKE_BUILD_TYPE=Debug -GNinj
 $ ninja
 $ ninja flash
 ```
+
+![build](docs/build.webp)

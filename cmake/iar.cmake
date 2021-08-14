@@ -1,7 +1,7 @@
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-set(EW_RH850_DIR "C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.1/rh850/")
+set(EW_RH850_DIR "C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.1/rh850")
 
 set(CMAKE_C_COMPILER ${EW_RH850_DIR}/bin/iccrh850.exe)
 set(CMAKE_ASM_COMPILER ${EW_RH850_DIR}/bin/iasmrh850.exe)

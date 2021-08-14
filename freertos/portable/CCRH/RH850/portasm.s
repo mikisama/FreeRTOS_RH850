@@ -35,6 +35,7 @@
     .extern _xISRStackTop
 
     .public _vPortStartFirstTask
+    .public _vPortYield
     .public _vPortYieldHandler
     .public _vISRWrapper
 
@@ -62,6 +63,13 @@ _vPortStartFirstTask:
     dispose 0, lp
 
     eiret
+
+;/*-----------------------------------------------------------*/
+
+_vPortYield:
+
+    trap 0
+    jmp [lp]
 
 ;/*-----------------------------------------------------------*/
 

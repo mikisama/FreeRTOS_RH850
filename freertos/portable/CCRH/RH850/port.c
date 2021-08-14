@@ -190,9 +190,3 @@ void vPortSetupTimerInterrupt( void )
     OSTM0.CMP = ( configCPU_CLOCK_HZ / configTICK_RATE_HZ / 2 ) - 1;
     OSTM0.TS = 1;
 }
-
-#pragma inline_asm vPortYield
-void vPortYield(void)
-{
-    trap 0
-}

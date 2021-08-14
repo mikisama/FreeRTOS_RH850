@@ -24,7 +24,28 @@
             "problemMatcher": []
         },
         {
-            "label": "CMake Gen",
+            "label": "Download",
+            "type": "shell",
+            "command": "ninja",
+            "args": [
+                "flash"
+            ],
+            "problemMatcher": [],
+            "dependsOn": [
+                "Build"
+            ]
+        },
+        {
+            "label": "Erase",
+            "type": "shell",
+            "command": "ninja",
+            "args": [
+                "erase"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake Generate",
             "type": "shell",
             "command": "cmake",
             "args": [

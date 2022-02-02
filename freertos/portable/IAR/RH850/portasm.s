@@ -25,6 +25,7 @@
  * 1 tab == 4 spaces!
  */
 
+    SECTION CSTACK:DATA
     SECTION .text:CODE
 
     EXTERN _vTaskSwitchContext
@@ -32,7 +33,6 @@
     EXTERN _vISRHandler
     EXTERN _xPortSwitchRequired
     EXTERN _xInterruptNesting
-    EXTERN _xISRStackTop
 
     PUBLIC _vPortStartFirstTask
     PUBLIC _vPortYieldHandler
@@ -116,10 +116,9 @@ _vISRWrapper:
     bne aa                              ; {
     pushsp r20 - r30                    ;     Save General Purpose Register (callee save register)
     mov _pxCurrentTCB, r2               ;     pxCurrentTCB->pxTopOfStack = SP
-    ld.w 0[r2], r2                      ;     SP = xISRStackTop
+    ld.w 0[r2], r2                      ;     SP = MainStackTop
     st.w sp, 0[r2]                      ; }
-    mov _xISRStackTop, r2
-    ld.w 0[r2], sp
+    mov SFE CSTACK, sp
 aa:
     add 0x1, r7                         ; xInterruptNesting++
     st.w r7, 0[r6]

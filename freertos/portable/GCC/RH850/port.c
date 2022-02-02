@@ -32,16 +32,6 @@
 /* Constants required to set up the initial stack. */
 #define portINITIAL_PSW     ( 0x00008000 ) /* PSW.EBV bit */
 
-#ifndef configISR_STACK_SIZE
-#define configISR_STACK_SIZE ( 512 )
-#endif
-
-/* The stack used by interrupt service routines. */
-static StackType_t xISRStack[ configISR_STACK_SIZE ] = { 0 };
-
-/* The top of ISR stack. */
-const StackType_t * const xISRStackTop = &( xISRStack[ ( configISR_STACK_SIZE & ~portBYTE_ALIGNMENT_MASK ) ] );
-
 /* Counts the interrupt nesting depth. A context switch is only performed
  * if the nesting depth is 0. */
 volatile BaseType_t xInterruptNesting = 0;

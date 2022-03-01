@@ -16,7 +16,7 @@ set(CMAKE_C_LINK_EXECUTABLE     "\"${CMAKE_CCRH_LINKER}\" <OBJECTS> <LINK_FLAGS>
 # When compiling with `-goptimize` and linking with `-optimize`, only some unused variables and functions are removed.
 # There is still some dead code that has not been removed.
 #
-# The start execution address specified by '-entry=_start', as far forward as possible,
+# The start execution address specified by '-entry=_start' should be as far ahead as possible,
 # otherwise CCRH's link-time optimization won't work at all.
 set(CMAKE_C_FLAGS "-Xcpu=g3k -lang=c99 -Osize -goptimize -g -g_line")
 set(CMAKE_ASM_FLAGS "-Xcpu=g3k -goptimize -g")

@@ -7,7 +7,7 @@
 ;-----------------------------------------------------------------------------
 ;   startup
 ;-----------------------------------------------------------------------------
-    .section ".text", text
+    .section ".startup", text
     .public _start
 _start:
     mov #__E_stack_bss, sp  ; set sp register

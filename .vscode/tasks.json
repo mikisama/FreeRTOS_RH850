@@ -63,10 +63,10 @@
             "type": "shell",
             "command": "cmake",
             "args": [
+                "-Bbuild",
                 "-DCMAKE_TOOLCHAIN_FILE='cmake/${input:toolchainType}.cmake'",
                 "-DCMAKE_BUILD_TYPE=${input:buildType}",
                 "-GNinja",
-                ".."
             ],
             "problemMatcher": [],
             "dependsOn": [
@@ -78,7 +78,7 @@
             "type": "shell",
             "command": "rm",
             "args": [
-                "CMakeCache*"
+                "build/CMakeCache*"
             ],
             "problemMatcher": []
         },

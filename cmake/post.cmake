@@ -22,10 +22,6 @@ if(${FREERTOS_TOOLCHAIN} STREQUAL "GCC")
         binary
         ${PROJECT_NAME}.elf
         ${PROJECT_NAME}.bin
-        ## Show the sizes of sections inside ELF
-        COMMAND
-        ${CMAKE_SIZE}
-        ${PROJECT_NAME}.elf
     )
 
 elseif(${FREERTOS_TOOLCHAIN} STREQUAL "IAR")

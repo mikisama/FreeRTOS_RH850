@@ -1,11 +1,10 @@
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-set(V850_GCC_DIR "D:/gcc-v850-elf-windows/bin")
+# This file assumes that path to the GCC toolchain is added
+# to the environment(PATH) variable, so that CMake can find
 
-set(CMAKE_C_COMPILER ${V850_GCC_DIR}/v850-elf-gcc.exe)
-set(CMAKE_OBJCOPY ${V850_GCC_DIR}/v850-elf-objcopy.exe)
-set(CMAKE_SIZE ${V850_GCC_DIR}/v850-elf-size.exe)
+set(CMAKE_C_COMPILER v850-elf-gcc)
 
 # -mlong-calls:
 # Treat all calls as being far away (near). If calls are assumed to be far away, the
@@ -37,6 +36,6 @@ set(CMAKE_ASM_FLAGS "-mv850e3v5 -msoft-float -fdata-sections -ffunction-sections
 
 set(LD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/sample/GCC/r7f701013.ld)
 
-set(CMAKE_EXE_LINKER_FLAGS "-nostartfiles -Wl,-T${LD_SCRIPT},-Map,${PROJECT_NAME}.map,--gc-sections")
+set(CMAKE_EXE_LINKER_FLAGS "-nostartfiles -Wl,-T${LD_SCRIPT},-Map,${PROJECT_NAME}.map,--gc-sections,--print-memory-usage")
 
 set(FREERTOS_TOOLCHAIN "GCC")

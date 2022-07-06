@@ -1,12 +1,15 @@
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-set(EW_RH850_DIR "C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.1/rh850")
+# This file assumes that path to the Renesas CC-RH toolchain is added
+# to the environment(PATH) variable, so that CMake can find
 
-set(CMAKE_C_COMPILER ${EW_RH850_DIR}/bin/iccrh850.exe)
-set(CMAKE_ASM_COMPILER ${EW_RH850_DIR}/bin/iasmrh850.exe)
+find_program(CMAKE_C_COMPILER iccrh850)
+find_program(CMAKE_ASM_COMPILER iasmrh850)
 
-include_directories(${EW_RH850_DIR}/lib)
+STRING(REGEX REPLACE "/bin.+$" "/lib" IAR_LIB_DIR ${CMAKE_C_COMPILER})
+
+include_directories(${IAR_LIB_DIR})
 
 set(CMAKE_C_FLAGS "--core g3k --dlib_config normal --diag_suppress Pa082")
 

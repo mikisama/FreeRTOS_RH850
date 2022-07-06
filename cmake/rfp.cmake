@@ -1,7 +1,14 @@
 # Renesas Flash Programmer
 
-set(RFP_DIR "C:/Program Files (x86)/Renesas Electronics/Programming Tools/Renesas Flash Programmer V3.08")
-set(RFP_CLI ${RFP_DIR}/rfp-cli.exe)
+# This file assumes that path to the rfp-cli is added
+# to the environment(PATH) variable, so that CMake can find
+
+find_program(RFP_CLI rfp-cli)
+
+if(NOT RFP_CLI)
+    message(FATAL_ERROR "  No RFP_CLI could be found.\n"
+    "  Please add the path to rfp-cli to the environment(PATH) variable.\n")
+endif()
 
 add_custom_target(flash
     COMMAND

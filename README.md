@@ -11,10 +11,19 @@ This provides a very basic port of FreeRTOS to RH850.
 
 ## How to Build
 
-Depend on the compiler you are using, modify the `INSTALL_DIR` variable in the CMake toolchain file as needed.
+<details>
+<summary>Build with GCC</summary>
 
-Modify the `V850_GCC_DIR` variable in `gcc.cmake` for example.
+### Add toolchain path to the environment(PATH) variable.
+```bash
+$ # Set the PATH Environment Variables in Windows PowerShell
+$ $env:path+=';D:/v850-elf-gcc-win32-x64/bin'
+$ $env:path+=';C:/Program Files (x86)/Renesas Electronics/Programming Tools/Renesas Flash Programmer V3.08'
+$ v850-elf-gcc --version
+$ rfp-cli --version
+```
 
+### Build command
 ```bash
 $ git clone https://github.com/mikisama/FreeRTOS_RH850
 $ cd FreeRTOS_RH850/build
@@ -22,5 +31,51 @@ $ cmake -DCMAKE_TOOLCHAIN_FILE='cmake/gcc.cmake' -DCMAKE_BUILD_TYPE=Debug -GNinj
 $ ninja
 $ ninja flash
 ```
+![build](docs/gcc_build.webp)
+</details>
 
-![build](docs/build.webp)
+<details>
+<summary>Build with IAR</summary>
+
+### Add toolchain path to the environment(PATH) variable.
+```bash
+$ # Set the PATH Environment Variables in Windows PowerShell
+$ $env:path+=';C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.1/rh850/bin'
+$ $env:path+=';C:/Program Files (x86)/Renesas Electronics/Programming Tools/Renesas Flash Programmer V3.08'
+$ iccrh850 --version
+$ rfp-cli --version
+```
+
+### Build command
+
+```bash
+$ git clone https://github.com/mikisama/FreeRTOS_RH850
+$ cd FreeRTOS_RH850/build
+$ cmake -DCMAKE_TOOLCHAIN_FILE='cmake/iar.cmake' -DCMAKE_BUILD_TYPE=Debug -GNinja ..
+$ ninja
+```
+![build](docs/iar_build.webp)
+</details>
+
+<details>
+<summary>Build with CCRH</summary>
+
+### Add toolchain path to the environment(PATH) variable.
+```bash
+$ # Set the PATH Environment Variables in Windows PowerShell
+$ $env:path+=';C:/Program Files (x86)/Renesas Electronics/CS+/CC/CC-RH/V2.04.00/bin'
+$ $env:path+=';C:/Program Files (x86)/Renesas Electronics/Programming Tools/Renesas Flash Programmer V3.08'
+$ ccrh -v
+$ rfp-cli --version
+```
+
+### Build command
+
+```bash
+$ git clone https://github.com/mikisama/FreeRTOS_RH850
+$ cd FreeRTOS_RH850/build
+$ cmake -DCMAKE_TOOLCHAIN_FILE='cmake/ccrh.cmake' -DCMAKE_BUILD_TYPE=Debug -GNinja ..
+$ ninja
+```
+![build](docs/ccrh_build.webp)
+</details>

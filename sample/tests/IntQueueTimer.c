@@ -72,7 +72,7 @@ void vInitialiseTimerForIntQueueTest(void)
     TAUJ0.RDE = 0;
     TAUJ0.RDM = 0;
 
-    TAUJ0.TS = 3; /* start TAUJ0I0 and TAUJ0I1*/
+    TAUJ0.TS = 3; /* start TAUJ0I0 and TAUJ0I1 */
 }
 /*-----------------------------------------------------------*/
 

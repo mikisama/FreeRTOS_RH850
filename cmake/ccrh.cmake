@@ -25,7 +25,7 @@ set(CMAKE_ASM_FLAGS_INIT " ")
 set(CMAKE_ASM_FLAGS_DEBUG_INIT " -g")
 set(CMAKE_ASM_FLAGS_MINSIZEREL_INIT " ")
 set(CMAKE_ASM_FLAGS_RELEASE_INIT " ")
-set(CMAKE_ASM_FLAGS_RELWITHDEBINFO_INIT " ")
+set(CMAKE_ASM_FLAGS_RELWITHDEBINFO_INIT " -g")
 
 # How to get CC-RH to delete dead code?
 # CC-RH's link-time optimization is applied when compiling with `-goptimize` and linking with `-optimize` and `-entry`.

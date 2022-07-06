@@ -1,7 +1,7 @@
 target_sources(${PROJECT_NAME}
     PRIVATE
     # {{BEGIN_TARGET_SOURCES}}
-    ${CMAKE_CURRENT_LIST_DIR}/ISRHandler.c
+    ${CMAKE_CURRENT_LIST_DIR}/IntTable.c
     ${CMAKE_CURRENT_LIST_DIR}/main.c
     ${CMAKE_CURRENT_LIST_DIR}/tests/${FREERTOS_TOOLCHAIN}/RegTest.s
     ${CMAKE_CURRENT_LIST_DIR}/tests/main_blink.c

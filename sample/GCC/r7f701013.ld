@@ -15,6 +15,9 @@ SECTIONS
     .text : ALIGN(4)
     {
         KEEP(*(.vector*))       /* vector table */
+        . = 0x200;
+        KEEP(*(.inttbl*))       /* interrupt table */
+        . = ALIGN(4);
         *(.text*)               /* program code */
     } > ROM
 

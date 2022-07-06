@@ -173,7 +173,7 @@ void vPortSetupTimerInterrupt( void )
      */
     ICOSTM0 = ( 0 << 12 ) | /* clear interrupt flag */
               ( 0 << 7 ) |  /* unmask interrupt */
-              ( 0 << 6 ) |  /* direct vector method */
+              ( 1 << 6 ) |  /* table reference method */
               ( 7 << 0 );   /* interrupt priority lowest */
 
     OSTM0.EMU = 0;

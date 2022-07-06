@@ -69,10 +69,19 @@ void prvSetupHardware(void)
     PMC0 &= ~(1 << 0);
 
     /*
-     * set EBASE.RINT
-     * all EI level interrupts will jump to 0x0100
+     * set EBASE
+     *
+     * In order to use table reference method EBASE.RINT must be 0.
      */
-    __LDSR(3, 1, 0x0001);
+    __LDSR(3, 1, 0x0000);
+
+    /*
+     * set INTBP
+     *
+     * Must be aligned to 0x200.
+     */
+    extern void *const IntTable[];
+    __LDSR(4, 1, (long)IntTable);
 }
 
 extern void main_blinky(void);

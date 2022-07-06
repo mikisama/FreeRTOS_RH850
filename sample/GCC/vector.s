@@ -3,7 +3,6 @@
     .global __reset
 
     .extern _start
-    .extern _vISRWrapper
     .extern _vPortYieldHandler
 
     .align 4
@@ -72,7 +71,7 @@ __feint:    /* 0x00f0 */
 
     .align 4
 __eiint0:   /* 0x0100 */
-    jr _vISRWrapper
+    jr __eiint0
 
     .align 4
 __eiint1:   /* 0x0110 */

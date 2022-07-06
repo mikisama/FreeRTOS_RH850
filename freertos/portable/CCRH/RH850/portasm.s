@@ -29,14 +29,14 @@
 
     .extern _vTaskSwitchContext
     .extern _pxCurrentTCB
-    .extern _vISRHandler
     .extern _xPortSwitchRequired
     .extern _xInterruptNesting
 
     .public _vPortStartFirstTask
     .public _vPortYield
     .public _vPortYieldHandler
-    .public _vISRWrapper
+    .public _vPortSaveContext
+    .public _vPortRestoreContext
 
     EIPC  .set 0
     EIPSW .set 1
@@ -110,9 +110,7 @@ _vPortYieldHandler:
 
 ;/*-----------------------------------------------------------*/
 
-_vISRWrapper:
-
-    prepare lp, 0
+_vPortSaveContext:
 
     pushsp r5, r19                      ; Save General Purpose Register (caller save register)
     pushsp r1, r2
@@ -133,10 +131,14 @@ aa:
     add 0x1, r7                         ; xInterruptNesting++
     st.w r7, 0[r6]
 
-    stsr EIIC, r6                       ; Save EI level Interrupt Cause
-
     ei                                  ; Enable interrupt (enable interrupt nesting)
-    jarl _vISRHandler, lp               ; Call the ISR Handler
+
+    jmp [lp]
+
+;/*-----------------------------------------------------------*/
+
+_vPortRestoreContext:
+
     di                                  ; Disable interrupt (disable interrupt nesting)
 
     mov #_xInterruptNesting, r6

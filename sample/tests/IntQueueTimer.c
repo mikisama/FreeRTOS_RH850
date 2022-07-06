@@ -40,12 +40,12 @@ void vInitialiseTimerForIntQueueTest(void)
 {
     ICTAUJ0I0 = (0 << 12) | /* clear interrupt flag */
                 (0 << 7) |  /* unmask interrupt */
-                (0 << 6) |  /* direct vector method */
+                (1 << 6) |  /* table reference method */
                 (0 << 0);   /* interrupt priority first highest */
 
     ICTAUJ0I1 = (0 << 12) | /* clear interrupt flag */
                 (0 << 7) |  /* unmask interrupt */
-                (0 << 6) |  /* direct vector method */
+                (1 << 6) |  /* table reference method */
                 (1 << 0);   /* interrupt priority second highest */
 
     TAUJ0.TPS = 0;

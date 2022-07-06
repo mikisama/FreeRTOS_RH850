@@ -76,6 +76,11 @@ define region RAM_RET_region = mem:[from _RAM_RET_BEG to _RAM_RET_END];  // RETE
 //   block .interrupt_core1
 // };
 
+"INTTBL":place at address mem:0x200
+{
+  ro section .inttbl
+};
+
 include "layout.icf";
 
 //-------------------------------------------------------------------------

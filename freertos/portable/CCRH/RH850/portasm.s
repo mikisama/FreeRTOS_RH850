@@ -133,11 +133,11 @@ aa:
     add 0x1, r7                         ; xInterruptNesting++
     st.w r7, 0[r6]
 
-    stsr EIIC, r6
+    stsr EIIC, r6                       ; Save EI level Interrupt Cause
 
-    ei
-    jarl _vISRHandler, lp
-    di
+    ei                                  ; Enable interrupt (enable interrupt nesting)
+    jarl _vISRHandler, lp               ; Call the ISR Handler
+    di                                  ; Disable interrupt (disable interrupt nesting)
 
     mov #_xInterruptNesting, r6
     ld.w 0[r6], r7
@@ -174,7 +174,7 @@ cc:                                     ;     else
     mov #_pxCurrentTCB, r2              ;     {
     ld.w 0[r2], r2                      ;         SP = pxCurrentTCB->pxTopOfStack
     ld.w 0[r2], sp                      ;     }
-dd:
+dd:                                     ; }
     popsp r6, r7
     ldsr r7, EIPC                       ; Restore EIPC
     ldsr r6, EIPSW                      ; Restore EIPSW

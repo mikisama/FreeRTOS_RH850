@@ -39,7 +39,6 @@ void prvSetupHardware(void)
         while ((MOSCS & 0x04u) != 0x04u)
         {
             /* Wait for active MainOSC */
-            __NOP();
         }
     }
 
@@ -51,7 +50,6 @@ void prvSetupHardware(void)
         while ((PLLS & 0x04u) != 0x04u)
         {
             /* Wait for active PLL */
-            __NOP();
         }
     }
 
@@ -59,7 +57,7 @@ void prvSetupHardware(void)
     protected_write(PROTCMD1, PROTS1, CKSC_CPUCLKS_CTL, 0x03u);
     while (CKSC_CPUCLKS_ACT != 0x03u)
     {
-        __NOP();
+        /* Wait for active CPUCLK */
     }
 
     /*

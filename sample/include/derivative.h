@@ -8,7 +8,7 @@
 #define __DI() asm("di")
 #define __EI() asm("ei")
 #define __STSR(regID, selID) ({ long _val_; asm("stsr " #regID ", %[_val_], " #selID : [_val_]"=r"(_val_)); _val_; })
-#define __LDSR(regID, selID, val) asm("ldsr %[_val_]," #regID "," #selID :: [_val_]"r"(val))
+#define __LDSR(regID, selID, val) asm("ldsr %[_val_]," #regID "," #selID ::[_val_] "r"(val))
 #elif defined(__ICCRH850__)
 #include "intrinsics.h"
 #elif defined(__CCRH__)
@@ -26,14 +26,6 @@
         (reg) = (value);                           \
     } while ((pstatus) == 1u)
 
-#define software_reset()                              \
-    do                                                \
-    {                                                 \
-        protected_write(PROTCMD0, PROTS0, SWRESA, 1); \
-        for (;;)                                      \
-        {                                             \
-            __NOP();                                  \
-        }                                             \
-    } while (0)
+#define software_reset() protected_write(PROTCMD0, PROTS0, SWRESA, 1)
 
 #endif // DERIVATIVE_H

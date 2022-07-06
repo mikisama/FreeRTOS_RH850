@@ -39,3 +39,5 @@ set(LD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/sample/GCC/r7f701013.ld)
 set(CMAKE_EXE_LINKER_FLAGS "-nostartfiles -Wl,-T${LD_SCRIPT},-Map,${PROJECT_NAME}.map,--gc-sections,--print-memory-usage")
 
 set(FREERTOS_TOOLCHAIN "GCC")
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)

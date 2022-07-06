@@ -1,19 +1,9 @@
 {
     "configurations": [
         {
-            "name": "Win32",
-            "includePath": [
-                "${workspaceFolder}/freertos/include",
-                "${workspaceFolder}/freertos/portable/GCC/RH850",
-                "${workspaceFolder}/sample/tests/include",
-                "${workspaceFolder}/sample/include"
-            ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
-            ],
-            "compilerPath": "D:/v850-elf-gcc-win32-x64/bin/v850-elf-gcc.exe"
+            "name": "GCC",
+            /* vscode is only compatible with GCC's compile_commands.json. */
+            "compileCommands": "build/compile_commands.json"
         }
     ],
     "version": 4

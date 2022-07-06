@@ -45,3 +45,5 @@ set(CMAKE_EXE_LINKER_FLAGS "-library=\"${CCRH_LIB_DIR}/libc\" \
                             -entry=_start")
 
 set(FREERTOS_TOOLCHAIN "CCRH")
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS FALSE)

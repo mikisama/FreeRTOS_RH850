@@ -6,8 +6,13 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "ninja",
-            "args": [],
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build",
+                "--target",
+                "all"
+            ],
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -17,8 +22,11 @@
         {
             "label": "Clean",
             "type": "shell",
-            "command": "ninja",
+            "command": "cmake",
             "args": [
+                "--build",
+                "build",
+                "--target",
                 "clean"
             ],
             "problemMatcher": []
@@ -26,8 +34,11 @@
         {
             "label": "Download",
             "type": "shell",
-            "command": "ninja",
+            "command": "cmake",
             "args": [
+                "--build",
+                "build",
+                "--target",
                 "flash"
             ],
             "problemMatcher": [],
@@ -38,8 +49,11 @@
         {
             "label": "Erase",
             "type": "shell",
-            "command": "ninja",
+            "command": "cmake",
             "args": [
+                "--build",
+                "build",
+                "--target",
                 "erase"
             ],
             "problemMatcher": []
@@ -49,8 +63,8 @@
             "type": "shell",
             "command": "cmake",
             "args": [
-                "-DCMAKE_TOOLCHAIN_FILE='cmake/gcc.cmake'",
-                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_TOOLCHAIN_FILE='cmake/${input:toolchainType}.cmake'",
+                "-DCMAKE_BUILD_TYPE=${input:buildType}",
                 "-GNinja",
                 ".."
             ],
@@ -67,9 +81,36 @@
                 "CMakeCache*"
             ],
             "problemMatcher": []
+        },
+    ],
+    "inputs": [
+        {
+            "id": "toolchainType",
+            "description": "Which toolchain do you want to use?",
+            "type": "pickString",
+            "options": [
+                "GCC",
+                "IAR",
+                "CCRH"
+            ],
+            "default": "GCC",
+        },
+        {
+            "id": "buildType",
+            "description": "Which build type do you want to use?",
+            "type": "pickString",
+            "options": [
+                "Debug",
+                "Release",
+                "RelWithDebInfo",
+                "MinSizeRel"
+            ],
+            "default": "Debug",
         }
     ],
     "options": {
-        "cwd": "${workspaceFolder}/build"
+        "env": {
+            "path": "D:/v850-elf-gcc-win32-x64/bin;C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.1/rh850/bin;C:/Program Files (x86)/Renesas Electronics/CS+/CC/CC-RH/V2.04.00/bin;C:/Program Files (x86)/Renesas Electronics/Programming Tools/Renesas Flash Programmer V3.08;${env:path}"
+        }
     }
 }

@@ -32,7 +32,7 @@
     .extern _vISRHandler
     .extern _xPortSwitchRequired
     .extern _xInterruptNesting
-    .extern __stack
+    .extern _stack
 
     .global _vPortStartFirstTask
     .global _vPortYieldHandler
@@ -117,7 +117,7 @@ _vISRWrapper:
     mov hilo(_pxCurrentTCB), r2         #     pxCurrentTCB->pxTopOfStack = SP
     ld.w 0[r2], r2                      #     SP = MainStackTop
     st.w sp, 0[r2]                      # }
-    mov hilo(__stack), sp
+    mov hilo(_stack), sp
 aa:
     add 0x1, r7                         # xInterruptNesting++
     st.w r7, 0[r6]

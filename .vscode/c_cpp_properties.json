@@ -13,7 +13,7 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "D:/gcc-v850-elf-windows/bin/v850-elf-gcc.exe"
+            "compilerPath": "D:/v850-elf-gcc-win32-x64/bin/v850-elf-gcc.exe"
         }
     ],
     "version": 4

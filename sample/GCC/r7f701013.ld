@@ -1,61 +1,58 @@
 STACK_SIZE = 0x200;
 
+ENTRY(_start)
+
 MEMORY
 {
-  ROM_0 (RX) : ORIGIN = 0x00000000, LENGTH = 512K
-  ROM_1 (RX) : ORIGIN = 0x01000000, LENGTH = 32K
-  RAM_0 (RW) : ORIGIN = 0xFEDF8000, LENGTH = 32K
-  RAM_1 (RW) : ORIGIN = 0xFEE00000, LENGTH = 32K
+  ROM (RX) : ORIGIN = 0x00000000, LENGTH = 512K
+  EXT (RX) : ORIGIN = 0x01000000, LENGTH = 32K
+  RAM (RW) : ORIGIN = 0xFEDF8000, LENGTH = 32K
+  RET (RW) : ORIGIN = 0xFEE00000, LENGTH = 32K
 }
-
-ENTRY(_start)
 
 SECTIONS
 {
     .text : ALIGN(4)
     {
         KEEP(*(.vector*))       /* vector table */
-        . = ALIGN(4);
         *(.text*)               /* program code */
-        . = ALIGN(4);
+    } > ROM
+
+    .rodata : ALIGN(4)
+    {
         *(.rodata*)             /* read-only data */
-    } > ROM_0
+    } > ROM
 
     . = ALIGN(4);
-    __etext = . ;               /* define a global symbol at end of code */
+    _etext = . ;                /* define a global symbol at end of code */
 
     .noinit (NOLOAD) : ALIGN(4)
     {
         *(.noinit*)             /* ram, but not cleared on reset */
-    } > RAM_0
+    } > RAM
 
     .data : ALIGN(4)
     {
         . = ALIGN(4);
-        __data_start__ = .;     /* define a global symbol at data start */
+        _sdata = .;             /* define a global symbol at data start */
         *(.ramfunc*)            /* functions to run in ram */
         *(.data*)               /* read-write initialized data */
         . = ALIGN(4);
-        __data_end__ = .;       /* define a global symbol at data end */
-    } > RAM_0 AT > ROM_0
+        _edata = .;             /* define a global symbol at data end */
+    } > RAM AT > ROM
 
     .bss : ALIGN(4)
     {
         . = ALIGN(4);
-        __bss_start__ = .;      /* define a global symbol at bss start */
+        _sbss = .;              /* define a global symbol at bss start */
         *(.bss*)                /* read-write zero initialized data */
         *(COMMON)
         . = ALIGN(4);
-        __bss_end__ = .;        /* define a global symbol at bss end */
-    } > RAM_0
+        _ebss = .;              /* define a global symbol at bss end */
+    } > RAM
 
-    .stack : ALIGN(4)
-    {
-        . = ALIGN(4);
-        __stack_start__ = .;    /* define a global symbol at stack start */
-        . += STACK_SIZE;
-        . = ALIGN(4);
-        __stack_end__ = .;      /* define a global symbol at stack end */
-        __stack = .;
-    } > RAM_0
+    . = ALIGN(4);
+    _end = .;
 }
+
+PROVIDE(_stack = ORIGIN(RAM) + LENGTH(RAM));

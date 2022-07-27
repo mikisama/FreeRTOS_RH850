@@ -93,7 +93,7 @@
     }
 
     #define portYIELD_FROM_ISR( x )                     portEND_SWITCHING_ISR( x )
-    #define portYIELD()                                 asm("trap 0")
+    #define portYIELD()                                 asm( "trap 0" )
 /*-----------------------------------------------------------*/
 
 
@@ -105,22 +105,22 @@
     static inline BaseType_t xSetInterruptMaskFromISR( void )
     {
         BaseType_t xPSW;
-        asm("stsr PSW, %[psw]" : [psw] "=r" ( xPSW ) );
-        asm("di" );
+        asm( "stsr PSW, %[psw]" : [psw] "=r" ( xPSW ) );
+        asm( "di" );
         return xPSW;
     }
 
     #pragma inline = forced
     static inline void vClearInterruptMaskFromISR( BaseType_t xPSW )
     {
-        asm("ldsr %[psw], PSW" :: [psw] "r" ( xPSW ) );
+        asm( "ldsr %[psw], PSW" :: [psw] "r" ( xPSW ) );
     }
 
     #define portSET_INTERRUPT_MASK_FROM_ISR()           xSetInterruptMaskFromISR()
     #define portCLEAR_INTERRUPT_MASK_FROM_ISR( x )      vClearInterruptMaskFromISR( x )
 
-    #define portDISABLE_INTERRUPTS()                    asm("di")
-    #define portENABLE_INTERRUPTS()                     asm("ei")
+    #define portDISABLE_INTERRUPTS()                    asm( "di" )
+    #define portENABLE_INTERRUPTS()                     asm( "ei" )
     #define portCRITICAL_NESTING_IN_TCB                 1
     #define portENTER_CRITICAL()                        vTaskEnterCritical()
     #define portEXIT_CRITICAL()                         vTaskExitCritical()
@@ -129,6 +129,41 @@
 /* Task function macros as described on the FreeRTOS.org WEB site. */
     #define portTASK_FUNCTION_PROTO( vFunction, pvParameters )    void vFunction( void * pvParameters )
     #define portTASK_FUNCTION( vFunction, pvParameters )          void vFunction( void * pvParameters )
+/*-----------------------------------------------------------*/
+
+/* Architecture specific optimisations. */
+    #ifndef configUSE_PORT_OPTIMISED_TASK_SELECTION
+        #define configUSE_PORT_OPTIMISED_TASK_SELECTION     1
+    #endif
+
+    #if ( configUSE_PORT_OPTIMISED_TASK_SELECTION == 1 )
+
+/* Check the configuration. */
+        #if ( configMAX_PRIORITIES > 32 )
+            #error configUSE_PORT_OPTIMISED_TASK_SELECTION can only be set to 1 when configMAX_PRIORITIES is less than or equal to 32.  It is very rare that a system requires more than 10 to 15 difference priorities as tasks that share a priority will time slice.
+        #endif
+
+/* Store/clear the ready priorities in a bit map. */
+        #define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities )      ( uxReadyPriorities ) |= ( 1UL << ( uxPriority ) )
+        #define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities )       ( uxReadyPriorities ) &= ~( 1UL << ( uxPriority ) )
+
+        /*
+         *           uxReadyPriorities             uxTopPriority
+         * -----------------------------------    ---------------
+         * b31  b30  b29  ...   b02  b01  b00           --
+         *  1    x    x          x    x    x            31
+         *  0    1    x          x    x    x            30
+         *  0    0    1          x    x    x            29
+         *  :    :    :          :    :    :            :
+         *  :    :    :          :    :    :            :
+         *  0    0    0          1    x    x            02
+         *  0    0    0          0    1    x            01
+         *  0    0    0          0    0    1            00
+         */
+        #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities )    ( uxTopPriority ) = ( 32 - __SCH1L( ( uxReadyPriorities ) ) )
+
+    #endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
+/*-----------------------------------------------------------*/
 
     #ifdef __cplusplus
         }

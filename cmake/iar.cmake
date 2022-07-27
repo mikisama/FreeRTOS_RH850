@@ -1,7 +1,7 @@
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-# This file assumes that path to the Renesas CC-RH toolchain is added
+# This file assumes that path to the IAR toolchain is added
 # to the environment(PATH) variable, so that CMake can find
 
 find_program(CMAKE_C_COMPILER iccrh850)

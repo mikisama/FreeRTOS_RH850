@@ -27,23 +27,6 @@ set(CMAKE_ASM_FLAGS_MINSIZEREL_INIT " ")
 set(CMAKE_ASM_FLAGS_RELEASE_INIT " ")
 set(CMAKE_ASM_FLAGS_RELWITHDEBINFO_INIT " -g")
 
-# How to get CC-RH to delete dead code?
-# CC-RH's link-time optimization is applied when compiling with `-goptimize` and linking with `-optimize` and `-entry`.
-#
-# The start execution address specified by `-entry=_start` should be as far ahead as possible,
-# otherwise CC-RH's link-time optimization won't work at all.
-set(CMAKE_C_FLAGS "-Xcpu=g3k -lang=c99 -goptimize")
-set(CMAKE_ASM_FLAGS "-Xcpu=g3k -goptimize")
-
-set(LD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/sample/CCRH/rh850_ccrh.ld)
-
-set(CMAKE_EXE_LINKER_FLAGS "-library=\"${CCRH_LIB_DIR}/libc\" \
-                            -sub=${LD_SCRIPT} \
-                            -list=${PROJECT_NAME}.map \
-                            -show=all \
-                            -optimize \
-                            -entry=_start")
-
 set(FREERTOS_TOOLCHAIN "CCRH")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS FALSE)

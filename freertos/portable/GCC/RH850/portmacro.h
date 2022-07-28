@@ -93,7 +93,7 @@
     }
 
     #define portYIELD_FROM_ISR( x )                     portEND_SWITCHING_ISR( x )
-    #define portYIELD()                                 asm("trap 0")
+    #define portYIELD()                                 asm( "trap 0" )
 /*-----------------------------------------------------------*/
 
 
@@ -137,11 +137,11 @@
     #if ( configUSE_PORT_OPTIMISED_TASK_SELECTION == 1 )
 
 /* Generic helper function. */
-        __attribute__( ( always_inline ) ) static inline BaseType_t __SCH1L( BaseType_t xIN )
+        __attribute__( ( always_inline ) ) static inline BaseType_t xPortSearchOneFromLeft( BaseType_t xBitmap )
         {
-            BaseType_t xOUT;
-            asm( "sch1l %[in], %[out]" : [out] "=r" ( xOUT ) : [in] "r" ( xIN ) );
-            return xOUT;
+            BaseType_t xPos;
+            asm( "sch1l %[bitmap], %[pos]" : [pos] "=r" ( xPos ) : [bitmap] "r" ( xBitmap ) );
+            return xPos;
         }
 
 /* Check the configuration. */
@@ -166,7 +166,7 @@
          *  0    0    0          0    1    x            01
          *  0    0    0          0    0    1            00
          */
-        #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities )    ( uxTopPriority ) = ( 32 - __SCH1L( ( uxReadyPriorities ) ) )
+        #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities )    ( uxTopPriority ) = ( 32 - xPortSearchOneFromLeft( ( uxReadyPriorities ) ) )
 
     #endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
 /*-----------------------------------------------------------*/

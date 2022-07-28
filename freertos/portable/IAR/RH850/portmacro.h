@@ -138,6 +138,15 @@
 
     #if ( configUSE_PORT_OPTIMISED_TASK_SELECTION == 1 )
 
+/* Generic helper function. */
+        #pragma inline = forced
+        static inline BaseType_t xPortSearchOneFromLeft( BaseType_t xBitmap )
+        {
+            BaseType_t xPos;
+            asm( "sch1l %[bitmap], %[pos]" : [pos] "=r" ( xPos ) : [bitmap] "r" ( xBitmap ) );
+            return xPos;
+        }
+
 /* Check the configuration. */
         #if ( configMAX_PRIORITIES > 32 )
             #error configUSE_PORT_OPTIMISED_TASK_SELECTION can only be set to 1 when configMAX_PRIORITIES is less than or equal to 32.  It is very rare that a system requires more than 10 to 15 difference priorities as tasks that share a priority will time slice.
@@ -160,7 +169,7 @@
          *  0    0    0          0    1    x            01
          *  0    0    0          0    0    1            00
          */
-        #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities )    ( uxTopPriority ) = ( 32 - __SCH1L( ( uxReadyPriorities ) ) )
+        #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities )    ( uxTopPriority ) = ( 32 - xPortSearchOneFromLeft( ( uxReadyPriorities ) ) )
 
     #endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
 /*-----------------------------------------------------------*/

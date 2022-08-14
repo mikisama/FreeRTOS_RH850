@@ -91,6 +91,7 @@
             "options": [
                 "GCC",
                 "IAR",
+                "GHS",
                 "CCRH"
             ],
             "default": "GCC",
@@ -110,7 +111,7 @@
     ],
     "options": {
         "env": {
-            "path": "D:/v850-elf-gcc-win32-x64/bin;C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.1/rh850/bin;C:/Program Files (x86)/Renesas Electronics/CS+/CC/CC-RH/V2.04.00/bin;C:/Program Files (x86)/Renesas Electronics/Programming Tools/Renesas Flash Programmer V3.08;${env:path}"
+            "path": "D:/v850-elf-gcc-win32-x64/bin;C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.1/rh850/bin;C:/ghs/comp_201815;C:/Program Files (x86)/Renesas Electronics/CS+/CC/CC-RH/V2.04.00/bin;C:/Program Files (x86)/Renesas Electronics/Programming Tools/Renesas Flash Programmer V3.08;${env:path}"
         }
     }
 }

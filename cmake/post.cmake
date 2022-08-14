@@ -64,4 +64,21 @@ elseif(${FREERTOS_TOOLCHAIN} STREQUAL "CCRH")
         -output=${PROJECT_NAME}.bin
     )
 
+elseif(${FREERTOS_TOOLCHAIN} STREQUAL "GHS")
+
+    add_custom_command(TARGET
+        ${PROJECT_NAME}
+        POST_BUILD
+        ## Convert ELF to Motorola S-records
+        COMMAND
+        ${CMAKE_GSREC}
+        ${PROJECT_NAME}.elf
+        -o
+        ${PROJECT_NAME}.srec
+        ## Convert ELF to Raw Binary
+        COMMAND
+        ${CMAKE_GMEMFILE}
+        ${PROJECT_NAME}.elf
+    )
+
 endif()

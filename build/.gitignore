@@ -1,3 +1,5 @@
 *.ninja
 *.srec
 *.bin
+*.dla
+*.dnm

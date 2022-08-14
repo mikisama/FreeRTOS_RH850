@@ -108,8 +108,8 @@ SECTIONS
   .stack     align(4) pad(0x0800)       :>.         /* definition of stack size */
   .heapbase  align(4)                   :>.
   .heap      align(4)
-  	        pad(endaddr(iRAM_0)-addr(.heapbase))
-  	        NOCLEAR	                    :>.         /* definition of heap size */
+            pad(endaddr(iRAM_0)-addr(.heapbase))
+            NOCLEAR                     :>.         /* definition of heap size */
 /* Start of internal retention RAM area (iRAM_R) */
 
   .rdata    align(4)                    :>iRAM_R     /* user defined segment for for initialized data located in retention RAM  */

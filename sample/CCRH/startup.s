@@ -24,7 +24,7 @@ copy_data_loop:
     st.w r9, 0[r6]
     add 4, r6
     add 4, r8
-    jr copy_data_loop
+    br copy_data_loop
 copy_data_done:
 
     mov #__S_bss, r6
@@ -34,13 +34,13 @@ bss_clear_loop:
     bge bss_clear_done      ; if R6 >= R7, goto bss_clear_done
     st.w r0, 0[r6]
     add 4, r6
-    jr bss_clear_loop
+    br bss_clear_loop
 bss_clear_done:
 
     jarl _main, lp
 
 _exit:
-    jr _exit
+    br _exit
 
 ;-----------------------------------------------------------------------------
 ;   dummy section

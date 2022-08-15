@@ -158,7 +158,7 @@ bb:
 
     popsp r20 - r30                     ;         Restore General Purpose Register (callee save register)
 
-    jr dd                               ;     }
+    br dd                               ;     }
 cc:                                     ;     else
     mov _pxCurrentTCB, r2               ;     {
     ld.w 0[r2], r2                      ;         SP = pxCurrentTCB->pxTopOfStack

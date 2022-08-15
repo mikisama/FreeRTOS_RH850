@@ -25,7 +25,7 @@ copy_data_start:
     st.w r9, 0[r6]
     add 4, r6
     add 4, r8
-    jr copy_data_start
+    br copy_data_start
 copy_data_done:
 
     mov hilo(_sbss), r6
@@ -35,10 +35,10 @@ bss_clear_start:
     bge bss_clear_done              /* if R6 >= R7, goto bss_clear_done */
     st.w r0, 0[r6]
     add 4, r6
-    jr bss_clear_start
+    br bss_clear_start
 bss_clear_done:
 
     jarl _main, lp
 
 __exit:
-    jr __exit
+    br __exit

@@ -164,7 +164,7 @@ reg1_loop:
 
 reg1_error_loop:
 
-    jr reg1_error_loop
+    br reg1_error_loop
 
 ;/*-----------------------------------------------------------*/
 
@@ -326,6 +326,6 @@ reg2_loop:
 
 reg2_error_loop:
 
-    jr reg2_error_loop
+    br reg2_error_loop
 
 ;/*-----------------------------------------------------------*/

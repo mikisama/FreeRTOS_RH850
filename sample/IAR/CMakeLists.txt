@@ -22,3 +22,20 @@ target_link_options(${PROJECT_NAME}
     # The `SHELL:` prefix prevents option de-duplication
     "SHELL:--config_def CSTACK_SIZE=0x0200 --config_def HEAP_SIZE=0x0000"
 )
+
+# generate `iccrh850.predef` for better intellisense (code completions).
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/dummy.d)
+    file(TOUCH ${CMAKE_BINARY_DIR}/dummy.d)
+endif()
+
+add_custom_target(predef
+    COMMAND
+    ${CMAKE_C_COMPILER}
+    --core g3k
+    ${CMAKE_BINARY_DIR}/dummy.d
+    --silent
+    --predef_macros
+    ${CMAKE_BINARY_DIR}/iccrh850.predef
+)
+
+add_dependencies(${PROJECT_NAME} predef)

@@ -21,7 +21,7 @@
                 "__noreturn="
             ],
             "forcedInclude": [
-                "${workspaceFolder}/build/iccrh850.predef"
+                "${workspaceFolder}/build/iar.predef"
             ],
             "intelliSenseMode": "windows-clang-x86"
         },
@@ -37,13 +37,10 @@
                 "${workspaceFolder}/sample/include"
             ],
             "defines": [
-                "__ghs__",
-                "__CORE_V850E3V5__",
-                "__NoFloat__",
-                "__ghs_c_int__=int",
-                "__CHAR_BIT=8",
-                "__SHRT_BIT=16",
-                "__LONG_BIT=32"
+                "__ghs_c_int__=int"
+            ],
+            "forcedInclude": [
+                "${workspaceFolder}/build/ghs.predef"
             ],
             "intelliSenseMode": "windows-clang-arm"
         },

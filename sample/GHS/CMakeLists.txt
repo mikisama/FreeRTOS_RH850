@@ -13,8 +13,6 @@ target_compile_options(${PROJECT_NAME}
     -sda=all
     -no_callt
     -single_tda
-    -dwarf2
-    -delete
 )
 
 set(LD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/dr7f701013.ld)
@@ -22,10 +20,25 @@ set(LD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/dr7f701013.ld)
 target_link_options(${PROJECT_NAME}
     PUBLIC
     -T ${LD_SCRIPT}
+    -dwarf2
+    -delete
+)
+
+# generate `ghs.predef` for better intellisense (code completions).
+if(NOT EXISTS ${CMAKE_BINARY_DIR}/dummy.d)
+    file(TOUCH ${CMAKE_BINARY_DIR}/dummy.d)
+endif()
+
+add_custom_target(predef
+    COMMAND
+    ${CMAKE_C_COMPILER}
     -cpu=rh850g3k
     -sda=all
     -no_callt
     -single_tda
-    -dwarf2
-    -delete
+    ${CMAKE_BINARY_DIR}/dummy.d
+    -dM -E
+    -o ${CMAKE_BINARY_DIR}/ghs.predef
 )
+
+add_dependencies(${PROJECT_NAME} predef)

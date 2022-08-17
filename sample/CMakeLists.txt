@@ -4,7 +4,7 @@ target_sources(${PROJECT_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/ISRHandler.c
     ${CMAKE_CURRENT_LIST_DIR}/main.c
     ${CMAKE_CURRENT_LIST_DIR}/tests/${FREERTOS_TOOLCHAIN}/RegTest.s
-    ${CMAKE_CURRENT_LIST_DIR}/tests/main_blink.c
+    ${CMAKE_CURRENT_LIST_DIR}/tests/main_blinky.c
     ${CMAKE_CURRENT_LIST_DIR}/tests/main_full.c
     ${CMAKE_CURRENT_LIST_DIR}/tests/IntQueue.c
     ${CMAKE_CURRENT_LIST_DIR}/tests/IntQueueTimer.c

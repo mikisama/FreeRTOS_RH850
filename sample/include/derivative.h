@@ -12,6 +12,7 @@
 #elif defined(__ICCRH850__)
 #include <intrinsics.h>
 #elif defined(__CCRH__)
+#include <builtin.h>
 #define __NOP() __nop()
 #define __STSR(regID, selID) __stsr_rh(regID, selID)
 #define __LDSR(regID, selID, val) __ldsr_rh(regID, selID, val)

@@ -40,14 +40,12 @@ volatile BaseType_t xInterruptNesting = 0;
 volatile BaseType_t xPortSwitchRequired = pdFALSE;
 
 /*
- * Setup the timer to generate the tick interrupts.  The implementation in this
- * file is weak to allow application writers to change the timer used to
- * generate the tick interrupt.
+ * Setup the timer to generate the tick interrupt at the required frequency.
  */
 void vPortSetupTimerInterrupt( void );
 
 /*
- * Exception handlers.
+ * The tick interrupt handler.
  */
 void xPortSysTickHandler( void );
 
@@ -66,9 +64,9 @@ static void prvTaskExitError( void );
 /*
  * See header file for description.
  */
-StackType_t *pxPortInitialiseStack( StackType_t * pxTopOfStack,
-                                    TaskFunction_t pxCode,
-                                    void * pvParameters )
+StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters )
 {
     /* Simulate the stack frame as it would be created by a context switch
      * interrupt. */
@@ -147,6 +145,7 @@ void vPortEndScheduler( void )
 void xPortSysTickHandler( void )
 {
     BaseType_t xSavedInterruptStatus;
+
     xSavedInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
     {
         /* Increment the RTOS tick. */
@@ -156,27 +155,25 @@ void xPortSysTickHandler( void )
             xPortSwitchRequired = pdTRUE;
         }
     }
-    portCLEAR_INTERRUPT_MASK_FROM_ISR(xSavedInterruptStatus);
+    portCLEAR_INTERRUPT_MASK_FROM_ISR( xSavedInterruptStatus );
 }
 /*-----------------------------------------------------------*/
 
-/*
- * Setup the systick timer to generate the tick interrupts at the required
- * frequency.
- */
 void vPortSetupTimerInterrupt( void )
 {
     /*
-     * The G3K core only have 3 priority bits, so it have 8 interrupt priority levels
-     * (0: highest priority, 7: lowest priority).
+     * Attempt to set 4 priority bits.
+     * If some of them are not present, this should not cause any problems.
+     * The missing bits will remain fixed to zero.
      */
     ICOSTM0 = ( 0 << 12 ) | /* clear interrupt flag */
               ( 0 << 7 ) |  /* unmask interrupt */
               ( 0 << 6 ) |  /* direct vector method */
-              ( 7 << 0 );   /* interrupt priority lowest */
+              ( 15 << 0 );  /* interrupt priority lowest */
 
     OSTM0.EMU = 0;
     OSTM0.CTL = 0;
     OSTM0.CMP = ( configCPU_CLOCK_HZ / configTICK_RATE_HZ / 2 ) - 1;
     OSTM0.TS = 1;
 }
+/*-----------------------------------------------------------*/

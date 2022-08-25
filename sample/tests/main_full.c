@@ -85,9 +85,6 @@
 #include "recmutex.h"
 #include "IntQueue.h"
 
-/* Hardware specific includes. */
-// #include "lpc11xx.h"
-
 /* The period after which the check timer will expire provided no errors have
 been reported by any of the standard demo tasks.  ms are converted to the
 equivalent in ticks using the portTICK_PERIOD_MS constant. */
@@ -150,19 +147,19 @@ TimerHandle_t xCheckTimer = NULL;
     /* Create the register test tasks as described at the top of this file.
     These are naked functions that don't use any stack.  A stack still has
     to be allocated to hold the task context. */
-    xTaskCreate(vRegTest1Task,              /* Function that implements the task. */
-                "Reg1",                     /* Text name of the task. */
-                configMINIMAL_STACK_SIZE,   /* Stack allocated to the task. */
-                NULL,                       /* The task parameter is not used. */
-                tskIDLE_PRIORITY,           /* The priority to assign to the task. */
-                NULL );                     /* Don't receive a handle back, it is not needed. */
+    xTaskCreate( vRegTest1Task,              /* Function that implements the task. */
+                 "Reg1",                     /* Text name of the task. */
+                 configMINIMAL_STACK_SIZE,   /* Stack allocated to the task. */
+                 NULL,                       /* The task parameter is not used. */
+                 tskIDLE_PRIORITY,           /* The priority to assign to the task. */
+                 NULL );                     /* Don't receive a handle back, it is not needed. */
 
-    xTaskCreate(vRegTest2Task,              /* Function that implements the task. */
-                "Reg2",                     /* Text name of the task. */
-                configMINIMAL_STACK_SIZE,   /* Stack allocated to the task. */
-                NULL,                       /* The task parameter is not used. */
-                tskIDLE_PRIORITY,           /* The priority to assign to the task. */
-                NULL );                     /* Don't receive a handle back, it is not needed. */
+    xTaskCreate( vRegTest2Task,              /* Function that implements the task. */
+                 "Reg2",                     /* Text name of the task. */
+                 configMINIMAL_STACK_SIZE,   /* Stack allocated to the task. */
+                 NULL,                       /* The task parameter is not used. */
+                 tskIDLE_PRIORITY,           /* The priority to assign to the task. */
+                 NULL );                     /* Don't receive a handle back, it is not needed. */
 
     /* Create the software timer that performs the 'check' functionality,
     as described at the top of this file. */

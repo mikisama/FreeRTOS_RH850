@@ -42,9 +42,9 @@ void prvSetupHardware(void)
         }
     }
 
+    /* Prepare PLL */
     if ((PLLS & 0x04u) != 0x04u) /* Check if PLL needs to be started */
     {
-        /* Prepare PLL */
         PLLC = PllcValue;                               /* 80MHz PLL */
         protected_write(PROTCMD1, PROTS1, PLLE, 0x01u); /* Enable PLL */
         while ((PLLS & 0x04u) != 0x04u)

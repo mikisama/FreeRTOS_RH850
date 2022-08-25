@@ -410,7 +410,3 @@ static UBaseType_t uxLastControllingCycles = 0, uxLastBlockingCycles = 0, uxLast
 
     return xReturn;
 }
-
-
-
-

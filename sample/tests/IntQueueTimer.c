@@ -38,15 +38,15 @@
 
 void vInitialiseTimerForIntQueueTest(void)
 {
-    ICTAUJ0I0 = (0 << 12) | /* clear interrupt flag */
-                (0 << 7) |  /* unmask interrupt */
-                (0 << 6) |  /* direct vector method */
-                (0 << 0);   /* interrupt priority first highest */
+    ICTAUJ0I0 = ( 0 << 12 ) | /* clear interrupt flag */
+                ( 0 << 7 ) |  /* unmask interrupt */
+                ( 0 << 6 ) |  /* direct vector method */
+                ( 0 << 0 );   /* interrupt priority first highest */
 
-    ICTAUJ0I1 = (0 << 12) | /* clear interrupt flag */
-                (0 << 7) |  /* unmask interrupt */
-                (0 << 6) |  /* direct vector method */
-                (1 << 0);   /* interrupt priority second highest */
+    ICTAUJ0I1 = ( 0 << 12 ) | /* clear interrupt flag */
+                ( 0 << 7 ) |  /* unmask interrupt */
+                ( 0 << 6 ) |  /* direct vector method */
+                ( 1 << 0 );   /* interrupt priority second highest */
 
     TAUJ0.TPS = 0;
 
@@ -79,13 +79,15 @@ void vInitialiseTimerForIntQueueTest(void)
 void INTTAUJ0I0_IRQHandler(void)
 {
     RFTAUJ0I0 = 0;
-    portEND_SWITCHING_ISR(xFirstTimerHandler());
+
+    portEND_SWITCHING_ISR( xFirstTimerHandler() );
 }
 /*-----------------------------------------------------------*/
 
 void INTTAUJ0I1_IRQHandler(void)
 {
     RFTAUJ0I1 = 0;
-    portEND_SWITCHING_ISR(xSecondTimerHandler());
+
+    portEND_SWITCHING_ISR( xSecondTimerHandler() );
 }
 /*-----------------------------------------------------------*/

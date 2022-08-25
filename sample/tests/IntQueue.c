@@ -724,4 +724,3 @@ static UBaseType_t uxLastHighPriorityLoops1 = 0, uxLastHighPriorityLoops2 = 0, u
 
     return xErrorStatus;
 }
-

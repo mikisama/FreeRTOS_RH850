@@ -41,13 +41,9 @@
  * See http://www.freertos.org/a00110.html
  *----------------------------------------------------------*/
 
-// #if defined(__ICCRH850__)
-
 #include <stdint.h>
 #include <stddef.h>
 #include "derivative.h"
-
-// #endif
 
 /* Constants that describe the hardware and memory usage. */
 #define configCPU_CLOCK_HZ                    (80000000U)

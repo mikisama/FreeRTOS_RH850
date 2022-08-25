@@ -284,5 +284,3 @@ BaseType_t xReturn = pdPASS;
 
     return xReturn;
 }
-
-

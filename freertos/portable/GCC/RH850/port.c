@@ -29,6 +29,10 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+/* When debugging it can be useful if every register is set to a known value.
+ * Otherwise code space can be saved by just setting the registers that need to be set. */
+#define portPRELOAD_REGISTERS   ( 0 )
+
 /* Constants required to set up the initial stack. */
 #define portINITIAL_PSW     ( 0x00008000 ) /* PSW.EBV bit */
 
@@ -70,36 +74,48 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
 {
     /* Simulate the stack frame as it would be created by a context switch
      * interrupt. */
-    *( pxTopOfStack ) = ( StackType_t ) prvTaskExitError;   /* R31 (LP) */
-    *( --pxTopOfStack ) = ( StackType_t ) pvParameters;     /* R6       */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x07070707;       /* R7       */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x08080808;       /* R8       */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x09090909;       /* R9       */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x10101010;       /* R10      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x11111111;       /* R11      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x12121212;       /* R12      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x13131313;       /* R13      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x14141414;       /* R14      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x15151515;       /* R15      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x16161616;       /* R16      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x17171717;       /* R17      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x18181818;       /* R18      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x19191919;       /* R19      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x01010101;       /* R1       */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x02020202;       /* R2       */
-    *( --pxTopOfStack ) = ( StackType_t ) portINITIAL_PSW;  /* EIPSW    */
-    *( --pxTopOfStack ) = ( StackType_t ) pxCode;           /* EIPC     */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x20202020;       /* R20      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x21212121;       /* R21      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x22222222;       /* R22      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x23232323;       /* R23      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x24242424;       /* R24      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x25252525;       /* R25      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x26262626;       /* R26      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x27272727;       /* R27      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x28282828;       /* R28      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x29292929;       /* R29      */
-    *( --pxTopOfStack ) = ( StackType_t ) 0x30303030;       /* R30 (EP) */
+    pxTopOfStack -= 30;
+    #if ( portPRELOAD_REGISTERS == 1 )
+    {
+        pxTopOfStack[ 29 ] = ( StackType_t ) prvTaskExitError;  /* R31 (LP) */
+        pxTopOfStack[ 28 ] = ( StackType_t ) pvParameters;      /* R6       */
+        pxTopOfStack[ 27 ] = ( StackType_t ) 0x07070707;        /* R7       */
+        pxTopOfStack[ 26 ] = ( StackType_t ) 0x08080808;        /* R8       */
+        pxTopOfStack[ 25 ] = ( StackType_t ) 0x09090909;        /* R9       */
+        pxTopOfStack[ 24 ] = ( StackType_t ) 0x10101010;        /* R10      */
+        pxTopOfStack[ 23 ] = ( StackType_t ) 0x11111111;        /* R11      */
+        pxTopOfStack[ 22 ] = ( StackType_t ) 0x12121212;        /* R12      */
+        pxTopOfStack[ 21 ] = ( StackType_t ) 0x13131313;        /* R13      */
+        pxTopOfStack[ 20 ] = ( StackType_t ) 0x14141414;        /* R14      */
+        pxTopOfStack[ 19 ] = ( StackType_t ) 0x15151515;        /* R15      */
+        pxTopOfStack[ 18 ] = ( StackType_t ) 0x16161616;        /* R16      */
+        pxTopOfStack[ 17 ] = ( StackType_t ) 0x17171717;        /* R17      */
+        pxTopOfStack[ 16 ] = ( StackType_t ) 0x18181818;        /* R18      */
+        pxTopOfStack[ 15 ] = ( StackType_t ) 0x19191919;        /* R19      */
+        pxTopOfStack[ 14 ] = ( StackType_t ) 0x01010101;        /* R1       */
+        pxTopOfStack[ 13 ] = ( StackType_t ) 0x02020202;        /* R2       */
+        pxTopOfStack[ 12 ] = ( StackType_t ) portINITIAL_PSW;   /* EIPSW    */
+        pxTopOfStack[ 11 ] = ( StackType_t ) pxCode;            /* EIPC     */
+        pxTopOfStack[ 10 ] = ( StackType_t ) 0x20202020;        /* R20      */
+        pxTopOfStack[ 09 ] = ( StackType_t ) 0x21212121;        /* R21      */
+        pxTopOfStack[ 08 ] = ( StackType_t ) 0x22222222;        /* R22      */
+        pxTopOfStack[ 07 ] = ( StackType_t ) 0x23232323;        /* R23      */
+        pxTopOfStack[ 06 ] = ( StackType_t ) 0x24242424;        /* R24      */
+        pxTopOfStack[ 05 ] = ( StackType_t ) 0x25252525;        /* R25      */
+        pxTopOfStack[ 04 ] = ( StackType_t ) 0x26262626;        /* R26      */
+        pxTopOfStack[ 03 ] = ( StackType_t ) 0x27272727;        /* R27      */
+        pxTopOfStack[ 02 ] = ( StackType_t ) 0x28282828;        /* R28      */
+        pxTopOfStack[ 01 ] = ( StackType_t ) 0x29292929;        /* R29      */
+        pxTopOfStack[ 00 ] = ( StackType_t ) 0x30303030;        /* R30 (EP) */
+    }
+    #else
+    {
+        pxTopOfStack[ 29 ] = ( StackType_t ) prvTaskExitError;  /* R31 (LP) */
+        pxTopOfStack[ 28 ] = ( StackType_t ) pvParameters;      /* R6       */
+        pxTopOfStack[ 12 ] = ( StackType_t ) portINITIAL_PSW;   /* EIPSW    */
+        pxTopOfStack[ 11 ] = ( StackType_t ) pxCode;            /* EIPC     */
+    }
+    #endif
 
     return pxTopOfStack;
 }

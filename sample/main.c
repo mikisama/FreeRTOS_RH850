@@ -28,7 +28,7 @@
 #error no valid crystal freq. valid values are: 8 16 24
 #endif
 
-void prvSetupHardware(void)
+static void prvSetupHardware(void)
 {
     /* Prepare MainOsc */
     if ((MOSCS & 0x04u) != 0x4u) /* Check if MainOsc needs to be started */

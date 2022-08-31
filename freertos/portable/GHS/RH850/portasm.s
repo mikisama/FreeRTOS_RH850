@@ -127,7 +127,7 @@ aa:
     jarl _vISRHandler, lp               # Call the ISR Handler
     di                                  # Disable interrupt (disable interrupt nesting)
 
-    mov _xInterruptNesting, r6          ; xInterruptNesting--
+    mov _xInterruptNesting, r6          # xInterruptNesting--
     ld.w 0[r6], r7
     add -1, r7
     st.w r7, 0[r6]

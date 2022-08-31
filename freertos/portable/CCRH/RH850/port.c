@@ -98,16 +98,16 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
         pxTopOfStack[ 12 ] = ( StackType_t ) portINITIAL_PSW;   /* EIPSW    */
         pxTopOfStack[ 11 ] = ( StackType_t ) pxCode;            /* EIPC     */
         pxTopOfStack[ 10 ] = ( StackType_t ) 0x20202020;        /* R20      */
-        pxTopOfStack[ 09 ] = ( StackType_t ) 0x21212121;        /* R21      */
-        pxTopOfStack[ 08 ] = ( StackType_t ) 0x22222222;        /* R22      */
-        pxTopOfStack[ 07 ] = ( StackType_t ) 0x23232323;        /* R23      */
-        pxTopOfStack[ 06 ] = ( StackType_t ) 0x24242424;        /* R24      */
-        pxTopOfStack[ 05 ] = ( StackType_t ) 0x25252525;        /* R25      */
-        pxTopOfStack[ 04 ] = ( StackType_t ) 0x26262626;        /* R26      */
-        pxTopOfStack[ 03 ] = ( StackType_t ) 0x27272727;        /* R27      */
-        pxTopOfStack[ 02 ] = ( StackType_t ) 0x28282828;        /* R28      */
-        pxTopOfStack[ 01 ] = ( StackType_t ) 0x29292929;        /* R29      */
-        pxTopOfStack[ 00 ] = ( StackType_t ) 0x30303030;        /* R30 (EP) */
+        pxTopOfStack[ 9 ] = ( StackType_t ) 0x21212121;         /* R21      */
+        pxTopOfStack[ 8 ] = ( StackType_t ) 0x22222222;         /* R22      */
+        pxTopOfStack[ 7 ] = ( StackType_t ) 0x23232323;         /* R23      */
+        pxTopOfStack[ 6 ] = ( StackType_t ) 0x24242424;         /* R24      */
+        pxTopOfStack[ 5 ] = ( StackType_t ) 0x25252525;         /* R25      */
+        pxTopOfStack[ 4 ] = ( StackType_t ) 0x26262626;         /* R26      */
+        pxTopOfStack[ 3 ] = ( StackType_t ) 0x27272727;         /* R27      */
+        pxTopOfStack[ 2 ] = ( StackType_t ) 0x28282828;         /* R28      */
+        pxTopOfStack[ 1 ] = ( StackType_t ) 0x29292929;         /* R29      */
+        pxTopOfStack[ 0 ] = ( StackType_t ) 0x30303030;         /* R30 (EP) */
     }
     #else
     {

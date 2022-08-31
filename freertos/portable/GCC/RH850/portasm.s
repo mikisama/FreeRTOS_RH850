@@ -128,19 +128,17 @@ aa:
     jarl _vISRHandler, lp               # Call the ISR Handler
     di                                  # Disable interrupt (disable interrupt nesting)
 
-    mov hilo(_xInterruptNesting), r6
+    mov hilo(_xInterruptNesting), r6    # xInterruptNesting--
     ld.w 0[r6], r7
-    cmp 0x0, r7                         # if ( xInterruptNesting > 0 )
-    be bb                               # {
-    add -1, r7                          #     xInterruptNesting--
-    st.w r7, 0[r6]                      # }
-bb:
+    add -1, r7
+    st.w r7, 0[r6]
+
     cmp 0x0, r7
-    bne dd                              # if ( xInterruptNesting == 0 )
+    bne cc                              # if ( xInterruptNesting == 0 )
     mov hilo(_xPortSwitchRequired), r6  # {
     ld.w 0[r6], r7                      #     if ( xPortSwitchRequired )
     cmp 0x0, r7                         #     {
-    be cc
+    be bb
     st.w r0, 0[r6]                      #         xPortSwitchRequired = pdFALSE
 
     mov hilo(_pxCurrentTCB), r2         #         SP = pxCurrentTCB->pxTopOfStack
@@ -158,12 +156,12 @@ bb:
 
     popsp r20 - r30                     #         Restore General Purpose Register (callee save register)
 
-    br dd                               #     }
-cc:                                     #     else
+    br cc                               #     }
+bb:                                     #     else
     mov hilo(_pxCurrentTCB), r2         #     {
     ld.w 0[r2], r2                      #         SP = pxCurrentTCB->pxTopOfStack
     ld.w 0[r2], sp                      #     }
-dd:                                     # }
+cc:                                     # }
     popsp r6 - r7
     ldsr r7, EIPC                       # Restore EIPC
     ldsr r6, EIPSW                      # Restore EIPSW

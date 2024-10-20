@@ -2,6 +2,15 @@
 
 This provides a very basic port of FreeRTOS to RH850.
 
+Tested on the G3K single core core (F1L).
+
+## Advanced features
+
+- Optimized task selection: Use the `SCH1L` instruction (similar to the `CLZ` instruction of ARM Cortex-M).
+- Interrupt nesting is supported: Any interrupt with a higher priority can interrupt an interrupt handler running on a lower priority.
+- Optimized interrupt processing: Only scratch registers are saved/restored upon ISR entry/exit unless preemption is necessary.
+- Separate Interrupt Stack: RH850 does not support a separate hardware interrupt stack. This means that any interrupt might use any task stack depending on which context it is interrupting. Therefore, each task stack needs to be large enough to handle nested interrupts. Since assigning additional memory to each task stack would consume large amounts of RAM, we will use the system stack as the interrupt stack. Only the first level interrupt will use some amount of task stack
+
 ## Requirement
 
 1. [GCC](https://github.com/mikisama/Auto_Build_GCC_RH850/releases) or [IAR](https://www.iar.com/products/architectures/renesas/iar-embedded-workbench-for-renesas-rh850) or [GHS](https://www.ghs.com/products/v850_development.html) or [CCRH](https://www.renesas.com/eu/en/software-tool/c-compiler-package-rh850-family)

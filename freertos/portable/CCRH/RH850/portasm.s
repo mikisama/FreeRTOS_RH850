@@ -46,9 +46,9 @@
 
 _vPortStartFirstTask:
 
-    mov #_pxCurrentTCB, r2              ; SP = pxCurrentTCB->pxTopOfStack
-    ld.w 0[r2], r2
-    ld.w 0[r2], sp
+    mov #_pxCurrentTCB, r8              ; SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r8], r9
+    ld.w 0[r9], sp
 
     popsp r20, r30                      ; Restore General Purpose Register (callee save register)
 
@@ -85,15 +85,15 @@ _vPortYieldHandler:
 
     pushsp r20, r30                     ; Save General Purpose Register (callee save register)
 
-    mov #_pxCurrentTCB, r2              ; pxCurrentTCB->pxTopOfStack = SP
-    ld.w 0[r2], r2
-    st.w sp, 0[r2]
+    mov #_pxCurrentTCB, r8              ; pxCurrentTCB->pxTopOfStack = SP
+    ld.w 0[r8], r9
+    st.w sp, 0[r9]
 
     jarl _vTaskSwitchContext, lp
 
-    mov #_pxCurrentTCB, r2              ; SP = pxCurrentTCB->pxTopOfStack
-    ld.w 0[r2], r2
-    ld.w 0[r2], sp
+    mov #_pxCurrentTCB, r8              ; SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r8], r9
+    ld.w 0[r9], sp
 
     popsp r20, r30                      ; Restore General Purpose Register (callee save register)
 
@@ -125,9 +125,9 @@ _vISRWrapper:
     ld.w 0[r6], r7
     cmp 0x0, r7                         ; if ( xInterruptNesting == 0 )
     bne aa                              ; {
-    mov #_pxCurrentTCB, r2              ;     pxCurrentTCB->pxTopOfStack = SP
-    ld.w 0[r2], r2                      ;     SP = MainStackTop
-    st.w sp, 0[r2]                      ; }
+    mov #_pxCurrentTCB, r8              ;     pxCurrentTCB->pxTopOfStack = SP
+    ld.w 0[r8], r9                      ;     SP = MainStackTop (switch to the interrupt stack)
+    st.w sp, 0[r9]                      ; }
     mov #__E_stack_bss, sp
 aa:
     add 0x1, r7                         ; xInterruptNesting++
@@ -152,26 +152,26 @@ aa:
     be bb
     st.w r0, 0[r6]                      ;         xPortSwitchRequired = pdFALSE
 
-    mov #_pxCurrentTCB, r2              ;         SP = pxCurrentTCB->pxTopOfStack
-    ld.w 0[r2], r2
-    ld.w 0[r2], sp
+    mov #_pxCurrentTCB, r8              ;         SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r8], r9
+    ld.w 0[r9], sp
 
     pushsp r20, r30                     ;         Save General Purpose Register (callee save register)
-    st.w sp, 0[r2]                      ;         pxCurrentTCB->pxTopOfStack = SP
+    st.w sp, 0[r9]                      ;         pxCurrentTCB->pxTopOfStack = SP
 
     jarl _vTaskSwitchContext, lp        ;         vTaskSwitchContext()
 
-    mov #_pxCurrentTCB, r2              ;         SP = pxCurrentTCB->pxTopOfStack
-    ld.w 0[r2], r2
-    ld.w 0[r2], sp
+    mov #_pxCurrentTCB, r8              ;         SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r8], r9
+    ld.w 0[r9], sp
 
     popsp r20, r30                      ;         Restore General Purpose Register (callee save register)
 
     br cc                               ;     }
 bb:                                     ;     else
-    mov #_pxCurrentTCB, r2              ;     {
-    ld.w 0[r2], r2                      ;         SP = pxCurrentTCB->pxTopOfStack
-    ld.w 0[r2], sp                      ;     }
+    mov #_pxCurrentTCB, r8              ;     {
+    ld.w 0[r8], r9                      ;         SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r9], sp                      ;     }
 cc:                                     ; }
     popsp r6, r7
     ldsr r7, EIPC                       ; Restore EIPC

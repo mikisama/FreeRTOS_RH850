@@ -4,7 +4,7 @@ This provides a very basic port of FreeRTOS to RH850.
 
 Tested on the G3K single core chip (F1L).
 
-## Advanced features
+## Advanced Features
 
 - Optimized task selection: Use the `SCH1L` instruction (similar to the `CLZ` instruction of ARM Cortex-M).
 - Interrupt nesting is supported: Any interrupt with a higher priority can interrupt an interrupt handler running on a lower priority.
@@ -17,6 +17,11 @@ Tested on the G3K single core chip (F1L).
 2. [CMake](https://github.com/Kitware/CMake/releases)
 3. [Ninja](https://github.com/ninja-build/ninja/releases)
 4. [RFP](https://www.renesas.com/us/en/software-tool/renesas-flash-programmer-programming-gui)
+
+## Related documents
+
+- [RH850/F1L Group User's Manual: Hardware](https://www.renesas.com/en/document/mah/rh850f1l-group-users-manual-hardware)
+- [RH850G3K User's Manual: Software](https://www.renesas.com/en/document/mas/rh850g3k-users-manual-software-rev120)
 
 ## How to Build
 

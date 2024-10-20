@@ -2,7 +2,7 @@
 
 This provides a very basic port of FreeRTOS to RH850.
 
-Tested on the G3K single core core (F1L).
+Tested on the G3K single core chip (F1L).
 
 ## Advanced features
 

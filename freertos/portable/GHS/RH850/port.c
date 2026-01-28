@@ -34,7 +34,7 @@
 #define portPRELOAD_REGISTERS   ( 0 )
 
 /* Constants required to set up the initial stack. */
-#define portINITIAL_PSW     ( 0x00008000 ) /* PSW.EBV bit */
+#define portINITIAL_PSW     ( 0x00018000 ) /* PSW.EBV bit and PSW.CU bit */
 
 /* Counts the interrupt nesting depth. A context switch is only performed
  * if the nesting depth is 0. */
@@ -74,6 +74,54 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
 {
     /* Simulate the stack frame as it would be created by a context switch
      * interrupt. */
+#if !defined(__SoftwareFloat__) && !defined(__NoFloat__)
+    /* FPU used */
+    pxTopOfStack -= 31;
+    #if ( portPRELOAD_REGISTERS == 1 )
+    {
+        pxTopOfStack[ 30 ] = ( StackType_t ) prvTaskExitError;  /* R31 (LP) */
+        pxTopOfStack[ 29 ] = ( StackType_t ) pvParameters;      /* R6       */
+        pxTopOfStack[ 28 ] = ( StackType_t ) 0x07070707;        /* R7       */
+        pxTopOfStack[ 27 ] = ( StackType_t ) 0x08080808;        /* R8       */
+        pxTopOfStack[ 26 ] = ( StackType_t ) 0x09090909;        /* R9       */
+        pxTopOfStack[ 25 ] = ( StackType_t ) 0x10101010;        /* R10      */
+        pxTopOfStack[ 24 ] = ( StackType_t ) 0x11111111;        /* R11      */
+        pxTopOfStack[ 23 ] = ( StackType_t ) 0x12121212;        /* R12      */
+        pxTopOfStack[ 22 ] = ( StackType_t ) 0x13131313;        /* R13      */
+        pxTopOfStack[ 21 ] = ( StackType_t ) 0x14141414;        /* R14      */
+        pxTopOfStack[ 20 ] = ( StackType_t ) 0x15151515;        /* R15      */
+        pxTopOfStack[ 19 ] = ( StackType_t ) 0x16161616;        /* R16      */
+        pxTopOfStack[ 18 ] = ( StackType_t ) 0x17171717;        /* R17      */
+        pxTopOfStack[ 17 ] = ( StackType_t ) 0x18181818;        /* R18      */
+        pxTopOfStack[ 16 ] = ( StackType_t ) 0x19191919;        /* R19      */
+        pxTopOfStack[ 15 ] = ( StackType_t ) 0x01010101;        /* R1       */
+        pxTopOfStack[ 14 ] = ( StackType_t ) 0x02020202;        /* R2       */
+        pxTopOfStack[ 13 ] = ( StackType_t ) portINITIAL_PSW;   /* EIPSW    */
+        pxTopOfStack[ 12 ] = ( StackType_t ) pxCode;            /* EIPC     */
+        pxTopOfStack[ 11 ] = ( StackType_t ) 0x12121212;        /* FPSR     */
+        pxTopOfStack[ 10 ] = ( StackType_t ) 0x20202020;        /* R20      */
+        pxTopOfStack[ 9 ] = ( StackType_t ) 0x21212121;         /* R21      */
+        pxTopOfStack[ 8 ] = ( StackType_t ) 0x22222222;         /* R22      */
+        pxTopOfStack[ 7 ] = ( StackType_t ) 0x23232323;         /* R23      */
+        pxTopOfStack[ 6 ] = ( StackType_t ) 0x24242424;         /* R24      */
+        pxTopOfStack[ 5 ] = ( StackType_t ) 0x25252525;         /* R25      */
+        pxTopOfStack[ 4 ] = ( StackType_t ) 0x26262626;         /* R26      */
+        pxTopOfStack[ 3 ] = ( StackType_t ) 0x27272727;         /* R27      */
+        pxTopOfStack[ 2 ] = ( StackType_t ) 0x28282828;         /* R28      */
+        pxTopOfStack[ 1 ] = ( StackType_t ) 0x29292929;         /* R29      */
+        pxTopOfStack[ 0 ] = ( StackType_t ) 0x30303030;         /* R30 (EP) */
+    }
+    #else
+    {
+        pxTopOfStack[ 30 ] = ( StackType_t ) prvTaskExitError;  /* R31 (LP) */
+        pxTopOfStack[ 29 ] = ( StackType_t ) pvParameters;      /* R6       */
+        pxTopOfStack[ 13 ] = ( StackType_t ) portINITIAL_PSW;   /* EIPSW    */
+        pxTopOfStack[ 12 ] = ( StackType_t ) pxCode;            /* EIPC     */
+        pxTopOfStack[ 11 ] = ( StackType_t ) 0x00000000;        /* FPSR     */
+    }
+    #endif
+#else
+    /* FPU not used */
     pxTopOfStack -= 30;
     #if ( portPRELOAD_REGISTERS == 1 )
     {
@@ -116,6 +164,7 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
         pxTopOfStack[ 11 ] = ( StackType_t ) pxCode;            /* EIPC     */
     }
     #endif
+#endif
 
     return pxTopOfStack;
 }

@@ -34,7 +34,13 @@
 #define portPRELOAD_REGISTERS   ( 0 )
 
 /* Constants required to set up the initial stack. */
-#define portINITIAL_PSW     ( 0x00018000 ) /* PSW.EBV bit and PSW.CU bit */
+#define portINITIAL_PSW_MASK        ( 0x00078000 )  /* kept PSW.EBV and PSW.CUx bits */
+#define portCURRENT_PSW             ( __STSR( 5, 0 ) )
+#define portINITIAL_PSW             ( portCURRENT_PSW & portINITIAL_PSW_MASK )
+
+#define portINITIAL_FPSR_MASK       ( 0x00AE0000  ) /* kept FPU configuration bits (FN, PEM, RM, FS) */
+#define portCURRENT_FPSR            ( __STSR( 6, 0 ) )
+#define portINITIAL_FPSR            ( portCURRENT_FPSR & portINITIAL_FPSR_MASK )
 
 /* Counts the interrupt nesting depth. A context switch is only performed
  * if the nesting depth is 0. */
@@ -98,7 +104,7 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
         pxTopOfStack[ 14 ] = ( StackType_t ) 0x02020202;        /* R2       */
         pxTopOfStack[ 13 ] = ( StackType_t ) portINITIAL_PSW;   /* EIPSW    */
         pxTopOfStack[ 12 ] = ( StackType_t ) pxCode;            /* EIPC     */
-        pxTopOfStack[ 11 ] = ( StackType_t ) 0x12121212;        /* FPSR     */
+        pxTopOfStack[ 11 ] = ( StackType_t ) portINITIAL_FPSR;  /* FPSR     */
         pxTopOfStack[ 10 ] = ( StackType_t ) 0x20202020;        /* R20      */
         pxTopOfStack[ 9 ] = ( StackType_t ) 0x21212121;         /* R21      */
         pxTopOfStack[ 8 ] = ( StackType_t ) 0x22222222;         /* R22      */
@@ -117,7 +123,7 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
         pxTopOfStack[ 29 ] = ( StackType_t ) pvParameters;      /* R6       */
         pxTopOfStack[ 13 ] = ( StackType_t ) portINITIAL_PSW;   /* EIPSW    */
         pxTopOfStack[ 12 ] = ( StackType_t ) pxCode;            /* EIPC     */
-        pxTopOfStack[ 11 ] = ( StackType_t ) 0x00000000;        /* FPSR     */
+        pxTopOfStack[ 11 ] = ( StackType_t ) portINITIAL_FPSR;  /* FPSR     */
     }
     #endif
 #else

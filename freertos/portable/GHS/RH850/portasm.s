@@ -47,8 +47,7 @@ _vPortStartFirstTask:
 
     popsp r20 - r30                     # Restore General Purpose Register (callee save register)
 
-    popsp r6 - r8
-    ldsr r8, FPSR                       # Restore FPSR
+    popsp r6 - r7
     ldsr r7, EIPC                       # Restore EIPC
     ldsr r6, EIPSW                      # Restore EIPSW
 
@@ -70,8 +69,7 @@ _vPortYieldHandler:
 
     stsr EIPSW, r6                      # Save EIPSW
     stsr EIPC, r7                       # Save EIPC
-    stsr FPSR, r8                       # Save FPSR
-    pushsp r6 - r8
+    pushsp r6 - r7
 
     pushsp r20 - r30                    # Save General Purpose Register (callee save register)
 
@@ -87,8 +85,7 @@ _vPortYieldHandler:
 
     popsp r20 - r30                     # Restore General Purpose Register (callee save register)
 
-    popsp r6 - r8
-    ldsr r8, FPSR                       # Restore FPSR
+    popsp r6 - r7
     ldsr r7, EIPC                       # Restore EIPC
     ldsr r6, EIPSW                      # Restore EIPSW
 
@@ -110,8 +107,7 @@ _vISRWrapper:
 
     stsr EIPSW, r6                      # Save EIPSW
     stsr EIPC, r7                       # Save EIPC
-    stsr FPSR, r8                       # Save FPSR
-    pushsp r6 - r8
+    pushsp r6 - r7
 
     mov _xInterruptNesting, r6
     ld.w 0[r6], r7
@@ -165,8 +161,7 @@ bb:                                     #     else
     ld.w 0[r8], r9                      #         SP = pxCurrentTCB->pxTopOfStack
     ld.w 0[r9], sp                      #     }
 cc:                                     # }
-    popsp r6 - r8
-    ldsr r8, FPSR                       # Restore FPSR
+    popsp r6 - r7
     ldsr r7, EIPC                       # Restore EIPC
     ldsr r6, EIPSW                      # Restore EIPSW
 

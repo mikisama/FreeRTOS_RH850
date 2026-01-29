@@ -3,7 +3,7 @@
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software", to deal in
+ * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so,
@@ -47,7 +47,12 @@ _vPortStartFirstTask:
 
     popsp r20 - r30                     # Restore General Purpose Register (callee save register)
 
-    popsp r6 - r7
+#if !defined(__SoftwareFloat__) && !defined(__NoFloat__)
+    popsp r6 - r8                       # FPU used
+    ldsr r8, FPSR                       # Restore FPSR
+#else
+    popsp r6 - r7                       # FPU not used
+#endif
     ldsr r7, EIPC                       # Restore EIPC
     ldsr r6, EIPSW                      # Restore EIPSW
 
@@ -69,7 +74,12 @@ _vPortYieldHandler:
 
     stsr EIPSW, r6                      # Save EIPSW
     stsr EIPC, r7                       # Save EIPC
-    pushsp r6 - r7
+#if !defined(__SoftwareFloat__) && !defined(__NoFloat__)
+    stsr FPSR, r8                       # FPU used
+    pushsp r6 - r8                      # Save FPSR
+#else
+    pushsp r6 - r7                      # FPU not used
+#endif
 
     pushsp r20 - r30                    # Save General Purpose Register (callee save register)
 
@@ -85,7 +95,12 @@ _vPortYieldHandler:
 
     popsp r20 - r30                     # Restore General Purpose Register (callee save register)
 
-    popsp r6 - r7
+#if !defined(__SoftwareFloat__) && !defined(__NoFloat__)
+    popsp r6 - r8                       # FPU used
+    ldsr r8, FPSR                       # Restore FPSR
+#else
+    popsp r6 - r7                       # FPU not used
+#endif
     ldsr r7, EIPC                       # Restore EIPC
     ldsr r6, EIPSW                      # Restore EIPSW
 
@@ -107,7 +122,12 @@ _vISRWrapper:
 
     stsr EIPSW, r6                      # Save EIPSW
     stsr EIPC, r7                       # Save EIPC
-    pushsp r6 - r7
+#if !defined(__SoftwareFloat__) && !defined(__NoFloat__)
+    stsr FPSR, r8                       # FPU used
+    pushsp r6 - r8                      # Save FPSR
+#else
+    pushsp r6 - r7                      # FPU not used
+#endif
 
     mov _xInterruptNesting, r6
     ld.w 0[r6], r7
@@ -161,7 +181,12 @@ bb:                                     #     else
     ld.w 0[r8], r9                      #         SP = pxCurrentTCB->pxTopOfStack
     ld.w 0[r9], sp                      #     }
 cc:                                     # }
-    popsp r6 - r7
+#if !defined(__SoftwareFloat__) && !defined(__NoFloat__)
+    popsp r6 - r8                       # FPU used
+    ldsr r8, FPSR                       # Restore FPSR
+#else
+    popsp r6 - r7                       # FPU not used
+#endif
     ldsr r7, EIPC                       # Restore EIPC
     ldsr r6, EIPSW                      # Restore EIPSW
 

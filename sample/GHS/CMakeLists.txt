@@ -13,6 +13,7 @@ target_compile_options(${PROJECT_NAME}
     -sda=all
     -no_callt
     -single_tda
+    -preprocess_assembly_files
 )
 
 set(LD_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/dr7f701013.ld)

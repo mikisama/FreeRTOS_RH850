@@ -69,6 +69,14 @@ static void prvSetupHardware(void)
     PMC0 &= ~(1 << 0);
 
     /*
+     * Set PSW.EBV
+     * Enable EBASE as exception vector base address
+     */
+    long psw = __STSR(5, 0);
+    psw |= (1 << 15);
+    __LDSR(5, 0, psw);
+
+    /*
      * set EBASE.RINT
      * all EI level interrupts will jump to 0x0100
      */

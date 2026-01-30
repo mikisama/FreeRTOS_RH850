@@ -43,6 +43,9 @@
  *-----------------------------------------------------------
  */
 
+/* GHS includes. */
+    #include <v800_ghs.h>
+
 /* Type definitions. */
     #define portCHAR          char
     #define portFLOAT         float
@@ -93,7 +96,7 @@
     }
 
     #define portYIELD_FROM_ISR( x )                     portEND_SWITCHING_ISR( x )
-    #define portYIELD()                                 asm( "trap 0" )
+    #define portYIELD()                                 __asm ( "trap 0" )
 /*-----------------------------------------------------------*/
 
 
@@ -101,24 +104,11 @@
     extern void vTaskEnterCritical( void );
     extern void vTaskExitCritical( void );
 
-    __attribute__( ( always_inline ) ) static inline BaseType_t xSetInterruptMaskFromISR( void )
-    {
-        BaseType_t xPSW;
-        asm( "stsr PSW, %[psw]" : [psw] "=r" ( xPSW ) );
-        asm( "di" );
-        return xPSW;
-    }
+    #define portSET_INTERRUPT_MASK_FROM_ISR()           __DIR()
+    #define portCLEAR_INTERRUPT_MASK_FROM_ISR( x )      __RIR( x )
 
-    __attribute__( ( always_inline ) ) static inline void vClearInterruptMaskFromISR( BaseType_t xPSW )
-    {
-        asm( "ldsr %[psw], PSW" :: [psw] "r" ( xPSW ) );
-    }
-
-    #define portSET_INTERRUPT_MASK_FROM_ISR()           xSetInterruptMaskFromISR()
-    #define portCLEAR_INTERRUPT_MASK_FROM_ISR( x )      vClearInterruptMaskFromISR( x )
-
-    #define portDISABLE_INTERRUPTS()                    asm( "di" )
-    #define portENABLE_INTERRUPTS()                     asm( "ei" )
+    #define portDISABLE_INTERRUPTS()                    __DI()
+    #define portENABLE_INTERRUPTS()                     __EI()
     #define portCRITICAL_NESTING_IN_TCB                 1
     #define portENTER_CRITICAL()                        vTaskEnterCritical()
     #define portEXIT_CRITICAL()                         vTaskExitCritical()
@@ -135,14 +125,6 @@
     #endif
 
     #if ( configUSE_PORT_OPTIMISED_TASK_SELECTION == 1 )
-
-/* Generic helper function. */
-        __attribute__( ( always_inline ) ) static inline BaseType_t xPortSearchOneFromLeft( BaseType_t xBitmap )
-        {
-            BaseType_t xPos;
-            asm( "sch1l %[bitmap], %[pos]" : [pos] "=r" ( xPos ) : [bitmap] "r" ( xBitmap ) );
-            return xPos;
-        }
 
 /* Check the configuration. */
         #if ( configMAX_PRIORITIES > 32 )
@@ -166,7 +148,7 @@
          *  0    0    0          0    1    x            01
          *  0    0    0          0    0    1            00
          */
-        #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities )    ( uxTopPriority ) = ( 32 - xPortSearchOneFromLeft( ( uxReadyPriorities ) ) )
+        #define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities )    ( uxTopPriority ) = ( 32 - __SCH1L( ( uxReadyPriorities ) ) )
 
     #endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
 /*-----------------------------------------------------------*/

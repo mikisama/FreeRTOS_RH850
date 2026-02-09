@@ -2,6 +2,8 @@
 # used to post-process a binary after linking
 
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
+set(CMAKE_EXECUTABLE_SUFFIX_C ".elf")
+set(CMAKE_EXECUTABLE_SUFFIX_ASM ".elf")
 
 if(${FREERTOS_TOOLCHAIN} STREQUAL "GCC")
 

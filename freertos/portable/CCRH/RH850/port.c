@@ -114,6 +114,55 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
 {
     /* Simulate the stack frame as it would be created by a context switch
      * interrupt. */
+#if ( __FPU != 0 )
+    /* FPU used */
+    pxTopOfStack -= 32;
+    #if ( portPRELOAD_REGISTERS == 1 )
+    {
+        pxTopOfStack[ 31 ] = ( StackType_t ) prvTaskExitError;  /* R31 (LP) */
+        pxTopOfStack[ 30 ] = ( StackType_t ) 0x05050505;        /* R5 (TP)  */
+        pxTopOfStack[ 29 ] = ( StackType_t ) pvParameters;      /* R6       */
+        pxTopOfStack[ 28 ] = ( StackType_t ) 0x07070707;        /* R7       */
+        pxTopOfStack[ 27 ] = ( StackType_t ) 0x08080808;        /* R8       */
+        pxTopOfStack[ 26 ] = ( StackType_t ) 0x09090909;        /* R9       */
+        pxTopOfStack[ 25 ] = ( StackType_t ) 0x10101010;        /* R10      */
+        pxTopOfStack[ 24 ] = ( StackType_t ) 0x11111111;        /* R11      */
+        pxTopOfStack[ 23 ] = ( StackType_t ) 0x12121212;        /* R12      */
+        pxTopOfStack[ 22 ] = ( StackType_t ) 0x13131313;        /* R13      */
+        pxTopOfStack[ 21 ] = ( StackType_t ) 0x14141414;        /* R14      */
+        pxTopOfStack[ 20 ] = ( StackType_t ) 0x15151515;        /* R15      */
+        pxTopOfStack[ 19 ] = ( StackType_t ) 0x16161616;        /* R16      */
+        pxTopOfStack[ 18 ] = ( StackType_t ) 0x17171717;        /* R17      */
+        pxTopOfStack[ 17 ] = ( StackType_t ) 0x18181818;        /* R18      */
+        pxTopOfStack[ 16 ] = ( StackType_t ) 0x19191919;        /* R19      */
+        pxTopOfStack[ 15 ] = ( StackType_t ) 0x01010101;        /* R1       */
+        pxTopOfStack[ 14 ] = ( StackType_t ) 0x02020202;        /* R2       */
+        pxTopOfStack[ 13 ] = ( StackType_t ) portINITIAL_PSW;   /* EIPSW    */
+        pxTopOfStack[ 12 ] = ( StackType_t ) pxCode;            /* EIPC     */
+        pxTopOfStack[ 11 ] = ( StackType_t ) portINITIAL_FPSR;  /* FPSR     */
+        pxTopOfStack[ 10 ] = ( StackType_t ) 0x20202020;        /* R20      */
+        pxTopOfStack[ 9 ] = ( StackType_t ) 0x21212121;         /* R21      */
+        pxTopOfStack[ 8 ] = ( StackType_t ) 0x22222222;         /* R22      */
+        pxTopOfStack[ 7 ] = ( StackType_t ) 0x23232323;         /* R23      */
+        pxTopOfStack[ 6 ] = ( StackType_t ) 0x24242424;         /* R24      */
+        pxTopOfStack[ 5 ] = ( StackType_t ) 0x25252525;         /* R25      */
+        pxTopOfStack[ 4 ] = ( StackType_t ) 0x26262626;         /* R26      */
+        pxTopOfStack[ 3 ] = ( StackType_t ) 0x27272727;         /* R27      */
+        pxTopOfStack[ 2 ] = ( StackType_t ) 0x28282828;         /* R28      */
+        pxTopOfStack[ 1 ] = ( StackType_t ) 0x29292929;         /* R29      */
+        pxTopOfStack[ 0 ] = ( StackType_t ) 0x30303030;         /* R30 (EP) */
+    }
+    #else
+    {
+        pxTopOfStack[ 31 ] = ( StackType_t ) prvTaskExitError;  /* R31 (LP) */
+        pxTopOfStack[ 29 ] = ( StackType_t ) pvParameters;      /* R6       */
+        pxTopOfStack[ 13 ] = ( StackType_t ) portINITIAL_PSW;   /* EIPSW    */
+        pxTopOfStack[ 12 ] = ( StackType_t ) pxCode;            /* EIPC     */
+        pxTopOfStack[ 11 ] = ( StackType_t ) portINITIAL_FPSR;  /* FPSR     */
+    }
+    #endif
+#else
+    /* FPU not used */
     pxTopOfStack -= 31;
     #if ( portPRELOAD_REGISTERS == 1 )
     {
@@ -157,6 +206,7 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
         pxTopOfStack[ 11 ] = ( StackType_t ) pxCode;            /* EIPC     */
     }
     #endif
+#endif
 
     return pxTopOfStack;
 }
@@ -231,5 +281,203 @@ void vPortSetupTimerInterrupt( void )
     portOSTM0CTL = 0;
     portOSTM0CMP = ( configCPU_CLOCK_HZ / configTICK_RATE_HZ / 2 ) - 1;
     portOSTM0TS = 1;
+}
+/*-----------------------------------------------------------*/
+
+#define EIPC   0
+#define EIPSW  1
+#define EIIC   13
+#define FPSR   6
+
+#pragma inline_asm prvStartFirstTask
+static void prvStartFirstTask( void )
+{
+    mov #_pxCurrentTCB, r8              // SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r8], r9
+    ld.w 0[r9], sp
+
+    popsp r20, r30                      // Restore General Purpose Register (callee save register)
+
+#if ( __FPU != 0 )
+    popsp r6, r8                        // FPU used
+    ldsr r8, FPSR                       // Restore FPSR
+#else
+    popsp r6, r7                        // FPU not used
+#endif
+    ldsr r7, EIPC                       // Restore EIPC
+    ldsr r6, EIPSW                      // Restore EIPSW
+
+    popsp r1, r2                        // Restore General Purpose Register (caller save register)
+    popsp r5, r19
+
+    dispose 0, lp
+
+    eiret
+}
+/*-----------------------------------------------------------*/
+
+#pragma inline_asm prvYield
+static void prvYield( void )
+{
+    trap 0
+}
+/*-----------------------------------------------------------*/
+
+#pragma inline_asm prvYieldHandler
+static void prvYieldHandler( void )
+{
+    prepare lp, 0
+
+    pushsp r5, r19                      // Save General Purpose Register (caller save register)
+    pushsp r1, r2
+
+    stsr EIPSW, r6                      // Save EIPSW
+    stsr EIPC, r7                       // Save EIPC
+#if ( __FPU != 0 )
+    stsr FPSR, r8                       // FPU used
+    pushsp r6, r8                       // Save FPSR
+#else
+    pushsp r6, r7                       // FPU not used
+#endif
+
+    pushsp r20, r30                     // Save General Purpose Register (callee save register)
+
+    mov #_pxCurrentTCB, r8              // pxCurrentTCB->pxTopOfStack = SP
+    ld.w 0[r8], r9
+    st.w sp, 0[r9]
+
+    jarl _vTaskSwitchContext, lp
+
+    mov #_pxCurrentTCB, r8              // SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r8], r9
+    ld.w 0[r9], sp
+
+    popsp r20, r30                      // Restore General Purpose Register (callee save register)
+
+#if ( __FPU != 0 )
+    popsp r6, r8                        // FPU used
+    ldsr r8, FPSR                       // Restore FPSR
+#else
+    popsp r6, r7                        // FPU not used
+#endif
+    ldsr r7, EIPC                       // Restore EIPC
+    ldsr r6, EIPSW                      // Restore EIPSW
+
+    popsp r1, r2                        // Restore General Purpose Register (caller save register)
+    popsp r5, r19
+
+    dispose 0, lp
+
+    eiret
+}
+/*-----------------------------------------------------------*/
+
+#pragma inline_asm prvISRWrapper
+static void prvISRWrapper( void )
+{
+    prepare lp, 0
+
+    pushsp r5, r19                      // Save General Purpose Register (caller save register)
+    pushsp r1, r2
+
+    stsr EIPSW, r6                      // Save EIPSW
+    stsr EIPC, r7                       // Save EIPC
+#if ( __FPU != 0 )
+    stsr FPSR, r8                       // FPU used
+    pushsp r6, r8                       // Save FPSR
+#else
+    pushsp r6, r7                       // FPU not used
+#endif
+
+    mov #_xInterruptNesting, r6
+    ld.w 0[r6], r7
+    cmp 0, r7                           // if ( xInterruptNesting == 0 )
+    bne no_switch_sp                    // {
+
+    mov #_pxCurrentTCB, r8              //     pxCurrentTCB->pxTopOfStack = SP
+    ld.w 0[r8], r9
+    st.w sp, 0[r9]
+
+    mov #__E_stack_bss, sp              //     SP = MainStackTop (switch to the interrupt stack)
+no_switch_sp:                           // }
+    add 1, r7                           // xInterruptNesting++
+    st.w r7, 0[r6]
+
+    stsr EIIC, r6                       // Save EI level Interrupt Cause
+
+    ei                                  // Enable interrupt (enable interrupt nesting)
+    jarl _vISRHandler, lp               // Call the ISR Handler
+    di                                  // Disable interrupt (disable interrupt nesting)
+
+    mov #_xInterruptNesting, r6         // xInterruptNesting--
+    ld.w 0[r6], r7
+    add -1, r7
+    st.w r7, 0[r6]
+
+    cmp 0, r7                           // if ( xInterruptNesting == 0 )
+    bne no_switch_ctx                   // {
+
+    mov #_pxCurrentTCB, r8              //     SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r8], r9
+    ld.w 0[r9], sp
+
+    mov #_xPortSwitchRequired, r6
+    ld.w 0[r6], r7
+    cmp 0, r7                           //     if ( xPortSwitchRequired )
+    be no_switch_ctx                    //     {
+
+    st.w r0, 0[r6]                      //         xPortSwitchRequired = pdFALSE
+    pushsp r20, r30                     //         Save General Purpose Register (callee save register)
+    st.w sp, 0[r9]                      //         pxCurrentTCB->pxTopOfStack = SP
+
+    jarl _vTaskSwitchContext, lp        //         vTaskSwitchContext()
+
+    mov #_pxCurrentTCB, r8              //         SP = pxCurrentTCB->pxTopOfStack
+    ld.w 0[r8], r9
+    ld.w 0[r9], sp
+
+    popsp r20, r30                      //         Restore General Purpose Register (callee save register)
+                                        //     }
+                                        // }
+no_switch_ctx:
+#if ( __FPU != 0 )
+    popsp r6, r8                        // FPU used
+    ldsr r8, FPSR                       // Restore FPSR
+#else
+    popsp r6, r7                        // FPU not used
+#endif
+    ldsr r7, EIPC                       // Restore EIPC
+    ldsr r6, EIPSW                      // Restore EIPSW
+
+    popsp r1, r2                        // Restore General Purpose Register (caller save register)
+    popsp r5, r19
+
+    dispose 0, lp
+
+    eiret
+}
+/*-----------------------------------------------------------*/
+
+void vPortStartFirstTask( void )
+{
+    prvStartFirstTask();
+}
+/*-----------------------------------------------------------*/
+
+void vPortYield( void )
+{
+    prvYield();
+}
+/*-----------------------------------------------------------*/
+
+void vPortYieldHandler( void )
+{
+    prvYieldHandler();
+}
+/*-----------------------------------------------------------*/
+
+void vISRWrapper( void )
+{
+    prvISRWrapper();
 }
 /*-----------------------------------------------------------*/

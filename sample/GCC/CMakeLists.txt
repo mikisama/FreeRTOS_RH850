@@ -35,10 +35,12 @@ target_compile_options(${PROJECT_NAME}
     PUBLIC
     -mv850e3v5
     -msoft-float
+    # -mhard-float
     -fdata-sections
     -ffunction-sections
     -gdwarf-2
     -mlong-calls
+    $<$<COMPILE_LANGUAGE:ASM>:-x assembler-with-cpp>
 )
 
 set(LD_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/r7f701013.ld)

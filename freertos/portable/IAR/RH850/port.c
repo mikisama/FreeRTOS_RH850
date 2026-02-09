@@ -55,13 +55,15 @@
  * Otherwise code space can be saved by just setting the registers that need to be set. */
 #define portPRELOAD_REGISTERS       ( 0 )
 
+#define port_STSR(regID, selID)     __STSR(regID, selID)
+
 /* Constants required to set up the initial stack. */
 #define portINITIAL_PSW_MASK        ( 0x00078000 )  /* kept PSW.EBV and PSW.CUx bits */
-#define portCURRENT_PSW             ( __STSR( 5, 0 ) )
+#define portCURRENT_PSW             ( port_STSR( 5, 0 ) )
 #define portINITIAL_PSW             ( portCURRENT_PSW & portINITIAL_PSW_MASK )
 
 #define portINITIAL_FPSR_MASK       ( 0x00AE0000  ) /* kept FPU configuration bits (FN, PEM, RM, FS) */
-#define portCURRENT_FPSR            ( __STSR( 6, 0 ) )
+#define portCURRENT_FPSR            ( port_STSR( 6, 0 ) )
 #define portINITIAL_FPSR            ( portCURRENT_FPSR & portINITIAL_FPSR_MASK )
 
 #ifndef configSETUP_TICK_INTERRUPT

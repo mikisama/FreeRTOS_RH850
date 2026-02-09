@@ -29,12 +29,49 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+/* OSTM0 Interrupt Control Registers Base Address
+ * F1KM-S1 0xFFFFB0A8
+ * F1L     0xFFFFA098
+ */
+#ifndef portICOSTM0_BASE
+#define portICOSTM0_BASE    0xFFFFA098
+#endif
+
+/* OSTM0 Base Address
+ * F1KM-S1 0xFFD70000
+ * F1L     0xFFEC0000
+ */
+#ifndef portOSTM0_BASE
+#define portOSTM0_BASE      0xFFEC0000
+#endif
+
+#define portICOSTM0         ( *( volatile uint16_t * ) ( portICOSTM0_BASE ) )
+
+#define portOSTM0CMP        ( *( volatile uint32_t * ) ( portOSTM0_BASE + 0x00 ) )
+#define portOSTM0TS         ( *( volatile uint8_t * ) ( portOSTM0_BASE + 0x14 ) )
+#define portOSTM0CTL        ( *( volatile uint8_t * ) ( portOSTM0_BASE + 0x20 ) )
+
 /* When debugging it can be useful if every register is set to a known value.
  * Otherwise code space can be saved by just setting the registers that need to be set. */
-#define portPRELOAD_REGISTERS   ( 0 )
+#define portPRELOAD_REGISTERS       ( 0 )
+
+#define port_STSR(regID, selID)     __stsr_rh(regID, selID)
 
 /* Constants required to set up the initial stack. */
-#define portINITIAL_PSW     ( 0x00008000 ) /* PSW.EBV bit */
+#define portINITIAL_PSW_MASK        ( 0x00078000 )  /* kept PSW.EBV and PSW.CUx bits */
+#define portCURRENT_PSW             ( port_STSR( 5, 0 ) )
+#define portINITIAL_PSW             ( portCURRENT_PSW & portINITIAL_PSW_MASK )
+
+#define portINITIAL_FPSR_MASK       ( 0x00AE0000  ) /* kept FPU configuration bits (FN, PEM, RM, FS) */
+#define portCURRENT_FPSR            ( port_STSR( 6, 0 ) )
+#define portINITIAL_FPSR            ( portCURRENT_FPSR & portINITIAL_FPSR_MASK )
+
+#ifndef configSETUP_TICK_INTERRUPT
+
+/* The user has not provided their own tick interrupt configuration so use
+ * the definition in this file (which uses the interval timer). */
+    #define configSETUP_TICK_INTERRUPT()    vPortSetupTimerInterrupt()
+#endif /* configSETUP_TICK_INTERRUPT */
 
 /* Counts the interrupt nesting depth. A context switch is only performed
  * if the nesting depth is 0. */
@@ -45,6 +82,9 @@ volatile BaseType_t xPortSwitchRequired = pdFALSE;
 
 /*
  * Setup the timer to generate the tick interrupt at the required frequency.
+ * The application writer can define configSETUP_TICK_INTERRUPT() (in
+ * FreeRTOSConfig.h) such that their own tick interrupt configuration is used
+ * in place of vPortSetupTimerInterrupt().
  */
 void vPortSetupTimerInterrupt( void );
 
@@ -141,7 +181,7 @@ BaseType_t xPortStartScheduler( void )
 {
     /* Start the timer that generates the tick ISR.  Interrupts are disabled
      * here already. */
-    vPortSetupTimerInterrupt();
+    configSETUP_TICK_INTERRUPT();
 
     /* Start the first task. */
     vPortStartFirstTask();
@@ -183,14 +223,13 @@ void vPortSetupTimerInterrupt( void )
      * If some of them are not present, this should not cause any problems.
      * The missing bits will remain fixed to zero.
      */
-    ICOSTM0 = ( 0 << 12 ) | /* clear interrupt flag */
-              ( 0 << 7 ) |  /* unmask interrupt */
-              ( 0 << 6 ) |  /* direct vector method */
-              ( 15 << 0 );  /* interrupt priority lowest */
+    portICOSTM0 = ( 0 << 12 ) | /* clear interrupt flag */
+                  ( 0 << 7 ) |  /* unmask interrupt */
+                  ( 0 << 6 ) |  /* direct vector method */
+                  ( 15 << 0 );  /* interrupt priority lowest */
 
-    OSTM0.EMU = 0;
-    OSTM0.CTL = 0;
-    OSTM0.CMP = ( configCPU_CLOCK_HZ / configTICK_RATE_HZ / 2 ) - 1;
-    OSTM0.TS = 1;
+    portOSTM0CTL = 0;
+    portOSTM0CMP = ( configCPU_CLOCK_HZ / configTICK_RATE_HZ / 2 ) - 1;
+    portOSTM0TS = 1;
 }
 /*-----------------------------------------------------------*/

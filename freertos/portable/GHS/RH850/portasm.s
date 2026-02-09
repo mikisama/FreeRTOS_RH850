@@ -131,14 +131,16 @@ _vISRWrapper:
 
     mov _xInterruptNesting, r6
     ld.w 0[r6], r7
-    cmp 0x0, r7                         # if ( xInterruptNesting == 0 )
-    bne aa                              # {
+    cmp 0, r7                           # if ( xInterruptNesting == 0 )
+    bne no_switch_sp                    # {
+
     mov _pxCurrentTCB, r8               #     pxCurrentTCB->pxTopOfStack = SP
-    ld.w 0[r8], r9                      #     SP = MainStackTop (switch to the interrupt stack)
-    st.w sp, 0[r9]                      # }
-    mov ___ghsend_stack, sp
-aa:
-    add 0x1, r7                         # xInterruptNesting++
+    ld.w 0[r8], r9
+    st.w sp, 0[r9]
+
+    mov ___ghsend_stack, sp             #     SP = MainStackTop (switch to the interrupt stack)
+no_switch_sp:                           # }
+    add 1, r7                           # xInterruptNesting++
     st.w r7, 0[r6]
 
     stsr EIIC, r6                       # Save EI level Interrupt Cause
@@ -152,18 +154,19 @@ aa:
     add -1, r7
     st.w r7, 0[r6]
 
-    cmp 0x0, r7
-    bne cc                              # if ( xInterruptNesting == 0 )
-    mov _xPortSwitchRequired, r6        # {
-    ld.w 0[r6], r7                      #     if ( xPortSwitchRequired )
-    cmp 0x0, r7                         #     {
-    be bb
-    st.w r0, 0[r6]                      #         xPortSwitchRequired = pdFALSE
+    cmp 0, r7                           # if ( xInterruptNesting == 0 )
+    bne no_switch_ctx                   # {
 
-    mov _pxCurrentTCB, r8               #         SP = pxCurrentTCB->pxTopOfStack
+    mov _pxCurrentTCB, r8               #     SP = pxCurrentTCB->pxTopOfStack
     ld.w 0[r8], r9
     ld.w 0[r9], sp
 
+    mov _xPortSwitchRequired, r6
+    ld.w 0[r6], r7
+    cmp 0, r7                           #     if ( xPortSwitchRequired )
+    be no_switch_ctx                    #     {
+
+    st.w r0, 0[r6]                      #         xPortSwitchRequired = pdFALSE
     pushsp r20 - r30                    #         Save General Purpose Register (callee save register)
     st.w sp, 0[r9]                      #         pxCurrentTCB->pxTopOfStack = SP
 
@@ -174,13 +177,9 @@ aa:
     ld.w 0[r9], sp
 
     popsp r20 - r30                     #         Restore General Purpose Register (callee save register)
-
-    br cc                               #     }
-bb:                                     #     else
-    mov _pxCurrentTCB, r8               #     {
-    ld.w 0[r8], r9                      #         SP = pxCurrentTCB->pxTopOfStack
-    ld.w 0[r9], sp                      #     }
-cc:                                     # }
+                                        #     }
+                                        # }
+no_switch_ctx:
 #if !defined(__SoftwareFloat__) && !defined(__NoFloat__)
     popsp r6 - r8                       # FPU used
     ldsr r8, FPSR                       # Restore FPSR

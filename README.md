@@ -2,10 +2,11 @@
 
 This provides a very basic port of FreeRTOS to RH850.
 
-Tested on the G3K single core chip (F1L).
+Tested on the G3K single core chip (F1L) and the G3KH single core chip (F1KM-S1).
 
 ## Advanced Features
 
+- Add support for Floating Point Unit (FPU).
 - Optimized task selection: Use the `SCH1L` instruction (similar to the `CLZ` instruction of ARM Cortex-M).
 - Interrupt nesting is supported: Any interrupt with a higher priority can interrupt an interrupt handler running on a lower priority.
 - Optimized interrupt processing: Only scratch registers are saved/restored upon ISR entry/exit unless preemption is necessary.
@@ -22,6 +23,8 @@ Tested on the G3K single core chip (F1L).
 
 - [RH850/F1L Group User's Manual: Hardware](https://www.renesas.com/en/document/mah/rh850f1l-group-users-manual-hardware)
 - [RH850G3K User's Manual: Software](https://www.renesas.com/en/document/mas/rh850g3k-users-manual-software-rev120)
+- [RH850 F1KH, RH850/F1KM User's Manual: Hardware](https://www.renesas.com/en/document/mah/rh850f1km-rh850f1kh-users-manual-hardware)
+- [RH850G3KH User's Manual: Software](https://www.renesas.com/en/document/mas/rh850g3kh-users-manual-software)
 
 ## How to Build
 
